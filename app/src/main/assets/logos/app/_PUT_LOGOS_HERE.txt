@@ -1,0 +1,7 @@
+PUT YOUR LOGO FILES IN THIS FOLDER.
+Use exactly these names (png, webp or jpg), then rebuild the app:
+
+  app_logo.png  - Main logo: splash, PIN screen, welcome, side menu, About (PNG, transparent background)
+
+If a file is missing the app shows a neutral icon instead.
+Use only logos you own or have written permission to use.

@@ -9,7 +9,9 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -26,6 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -83,29 +86,63 @@ private fun ResultView(
     }
 }
 
-// ---------------------------------------------------------------- 14. Payments
+// ---------------------------------------------------------------- 14. Services (tab)
 
-private data class PayService(val nameRes: Int, val icon: ImageVector, val category: TxCategory)
+private data class PayService(
+    val nameRes: Int,
+    val icon: ImageVector,
+    val logo: String,
+    val category: TxCategory,
+    val group: Int,
+    val tint: Color
+)
 
 private val payServices = listOf(
-    PayService(R.string.svc_mobile, Icons.Filled.PhoneAndroid, TxCategory.PAYMENT),
-    PayService(R.string.svc_internet, Icons.Filled.Wifi, TxCategory.PAYMENT),
-    PayService(R.string.svc_electricity, Icons.Filled.ElectricBolt, TxCategory.UTILITIES),
-    PayService(R.string.svc_water, Icons.Filled.WaterDrop, TxCategory.UTILITIES),
-    PayService(R.string.svc_gas, Icons.Filled.LocalFireDepartment, TxCategory.UTILITIES),
-    PayService(R.string.svc_tv, Icons.Filled.Tv, TxCategory.PAYMENT),
-    PayService(R.string.svc_education, Icons.Filled.School, TxCategory.PAYMENT),
-    PayService(R.string.svc_transport, Icons.Filled.DirectionsBus, TxCategory.TRANSPORT)
+    PayService(R.string.svc_mobile, Icons.Filled.PhoneAndroid, "services/mobile", TxCategory.PAYMENT, 0, Color(0xFF2E9E5B)),
+    PayService(R.string.svc_internet, Icons.Filled.Wifi, "services/internet", TxCategory.PAYMENT, 0, Color(0xFF8E44AD)),
+    PayService(R.string.svc_tv, Icons.Filled.Tv, "services/tv", TxCategory.PAYMENT, 0, Color(0xFF607D8B)),
+    PayService(R.string.svc_education, Icons.Filled.School, "services/education", TxCategory.PAYMENT, 0, Color(0xFF0A74F5)),
+    PayService(R.string.svc_electricity, Icons.Filled.ElectricBolt, "services/electricity", TxCategory.UTILITIES, 1, Color(0xFFFF7525)),
+    PayService(R.string.svc_water, Icons.Filled.WaterDrop, "services/water", TxCategory.UTILITIES, 1, Color(0xFF1E90FF)),
+    PayService(R.string.svc_gas, Icons.Filled.LocalFireDepartment, "services/gas", TxCategory.UTILITIES, 1, Color(0xFFD6457B)),
+    PayService(R.string.svc_transport, Icons.Filled.DirectionsBus, "services/transport", TxCategory.TRANSPORT, 2, Color(0xFFE0A800))
 )
 
 @Composable
 fun PaymentsScreen(vm: AppViewModel, onQr: () -> Unit, onDetails: (String) -> Unit) {
+    var group by remember { mutableIntStateOf(-1) }
     var selected by remember { mutableStateOf<PayService?>(null) }
+    var searchOn by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
+    val groupNames = listOf(R.string.grp_payments, R.string.grp_utilities, R.string.grp_transport)
 
     Column(Modifier.fillMaxSize()) {
-        ScreenHeader(stringResource(R.string.payments), null)
+        Text(
+            stringResource(R.string.miniapps_title),
+            fontSize = 24.sp,
+            color = SoniColors.Navy,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 8.dp)
+        )
+        Row(
+            Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                Modifier.weight(1f).horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SoniChip(stringResource(R.string.grp_all), group == -1, { group = -1 })
+                groupNames.forEachIndexed { i, res ->
+                    SoniChip(stringResource(res), group == i, { group = i })
+                }
+            }
+            IconButton(onClick = { searchOn = !searchOn; if (!searchOn) query = "" }) {
+                Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search), tint = SoniColors.Navy)
+            }
+        }
         Column(
-            Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
+            Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             DemoBanner(stringResource(R.string.payments_demo_notice))
@@ -120,29 +157,67 @@ fun PaymentsScreen(vm: AppViewModel, onQr: () -> Unit, onDetails: (String) -> Un
                     Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null, tint = SoniColors.Muted)
                 }
             }
-            SectionTitle(stringResource(R.string.pay_services))
-            payServices.chunked(2).forEach { row ->
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    row.forEach { svc ->
-                        val isSel = selected == svc
-                        Column(
-                            Modifier.weight(1f)
-                                .background(if (isSel) SoniColors.MintSoft else SoniColors.Surface, RoundedCornerShape(18.dp))
-                                .border(1.dp, if (isSel) SoniColors.Teal else SoniColors.Border, RoundedCornerShape(18.dp))
-                                .clickable { selected = svc }
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(svc.icon, contentDescription = null, tint = SoniColors.Teal, modifier = Modifier.size(28.dp))
-                            Spacer(Modifier.height(8.dp))
-                            Text(stringResource(svc.nameRes), color = SoniColors.Navy, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+            if (searchOn) {
+                SoniTextField(
+                    value = query,
+                    onValueChange = { query = it.take(30) },
+                    label = stringResource(R.string.search)
+                )
+            }
+            val groupsToShow = if (group == -1) listOf(0, 1, 2) else listOf(group)
+            val sections = groupsToShow
+                .map { g ->
+                    g to payServices.filter {
+                        it.group == g && stringResource(it.nameRes).contains(query.trim(), ignoreCase = true)
+                    }
+                }
+                .filter { it.second.isNotEmpty() }
+            if (sections.isEmpty()) {
+                EmptyState(Icons.Filled.Search, stringResource(R.string.empty_search_title), stringResource(R.string.empty_search_text))
+            }
+            sections.forEach { (g, list) ->
+                Text(
+                    stringResource(groupNames[g]).uppercase(),
+                    color = SoniColors.Muted,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp,
+                    letterSpacing = 1.sp
+                )
+                SurfaceCard {
+                    list.chunked(4).forEach { row ->
+                        Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                            row.forEach { svc ->
+                                Column(
+                                    Modifier.weight(1f).clickable { selected = svc },
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Box(
+                                        Modifier.then(
+                                            if (selected == svc) Modifier.border(2.dp, SoniColors.Teal, RoundedCornerShape(20.dp))
+                                            else Modifier
+                                        ).padding(2.dp)
+                                    ) {
+                                        LogoBox(svc.logo, svc.icon, 60.dp, svc.tint, svc.tint.copy(alpha = 0.12f), 18.dp)
+                                    }
+                                    Spacer(Modifier.height(6.dp))
+                                    Text(
+                                        stringResource(svc.nameRes),
+                                        color = SoniColors.Navy,
+                                        fontSize = 12.sp,
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 2,
+                                        lineHeight = 14.sp
+                                    )
+                                }
+                            }
+                            repeat(4 - row.size) { Spacer(Modifier.weight(1f)) }
                         }
                     }
                 }
             }
             val sel = selected
             if (sel != null) {
-                PaymentForm(vm, sel, onDetails) { selected = null }
+                PaymentForm(vm, sel) { selected = null }
             }
             Spacer(Modifier.height(8.dp))
         }
@@ -150,7 +225,7 @@ fun PaymentsScreen(vm: AppViewModel, onQr: () -> Unit, onDetails: (String) -> Un
 }
 
 @Composable
-private fun PaymentForm(vm: AppViewModel, service: PayService, onDetails: (String) -> Unit, onFinished: () -> Unit) {
+private fun PaymentForm(vm: AppViewModel, service: PayService, onFinished: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val serviceName = stringResource(service.nameRes)
@@ -220,7 +295,7 @@ private fun PaymentForm(vm: AppViewModel, service: PayService, onDetails: (Strin
     }
 }
 
-// ---------------------------------------------------------------- 15. QR scanner (DEMO viewfinder)
+// ---------------------------------------------------------------- 15. QR scanner (DEMO viewfinder, no camera)
 
 @Composable
 fun QrScannerScreen(vm: AppViewModel, onBack: () -> Unit, onDetails: (String) -> Unit) {
@@ -231,11 +306,14 @@ fun QrScannerScreen(vm: AppViewModel, onBack: () -> Unit, onDetails: (String) ->
     var result by remember { mutableStateOf<Transaction?>(null) }
     val scope = rememberCoroutineScope()
     val merchant = stringResource(R.string.qr_demo_merchant)
+    val p1 = rememberLogo("partners/qr_partner_1")
+    val p2 = rememberLogo("partners/qr_partner_2")
+    val p3 = rememberLogo("partners/qr_partner_3")
 
     val transition = rememberInfiniteTransition(label = "scan")
     val line by transition.animateFloat(
-        initialValue = 0.05f,
-        targetValue = 0.95f,
+        initialValue = 0.08f,
+        targetValue = 0.92f,
         animationSpec = infiniteRepeatable(tween(1800, easing = LinearEasing), RepeatMode.Reverse),
         label = "scanLine"
     )
@@ -252,41 +330,51 @@ fun QrScannerScreen(vm: AppViewModel, onBack: () -> Unit, onDetails: (String) ->
         return
     }
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        ScreenHeader(stringResource(R.string.qr_scanner), onBack)
+    Box(Modifier.fillMaxSize().background(Color.Black)) {
         Column(
-            Modifier.padding(16.dp).fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            DemoBanner(stringResource(R.string.qr_demo_notice))
-            Box(
-                Modifier.size(260.dp).background(SoniColors.Navy, RoundedCornerShape(24.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Canvas(Modifier.fillMaxSize().padding(24.dp)) {
+            Row(Modifier.fillMaxWidth()) {
+                Spacer(Modifier.weight(1f))
+                Box(
+                    Modifier.size(44.dp).background(Color(0xFF2A2A2A), RoundedCornerShape(12.dp)).clickable(onClick = onBack),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.close), tint = Color.White)
+                }
+            }
+            Spacer(Modifier.height(20.dp))
+            Box(Modifier.background(Color(0xFF1E1E1E), RoundedCornerShape(16.dp)).padding(horizontal = 18.dp, vertical = 12.dp)) {
+                Text(stringResource(R.string.qr_aim), color = Color.White, fontSize = 18.sp)
+            }
+            Spacer(Modifier.height(28.dp))
+            Box(Modifier.fillMaxWidth().aspectRatio(1f), contentAlignment = Alignment.Center) {
+                Canvas(Modifier.fillMaxSize().padding(8.dp)) {
                     val w = size.width
                     val h = size.height
-                    val c = 36f
-                    val stroke = 8f
-                    val color = SoniColors.Mint
+                    val c = w * 0.18f
+                    val stroke = 12f
+                    val color = SoniColors.Orange
                     fun seg(a: Offset, b: Offset) = drawLine(color, a, b, stroke, StrokeCap.Round)
                     seg(Offset(0f, 0f), Offset(c, 0f)); seg(Offset(0f, 0f), Offset(0f, c))
                     seg(Offset(w, 0f), Offset(w - c, 0f)); seg(Offset(w, 0f), Offset(w, c))
                     seg(Offset(0f, h), Offset(c, h)); seg(Offset(0f, h), Offset(0f, h - c))
                     seg(Offset(w, h), Offset(w - c, h)); seg(Offset(w, h), Offset(w, h - c))
                     if (!scanned) {
-                        drawLine(color.copy(alpha = 0.9f), Offset(8f, h * line), Offset(w - 8f, h * line), 4f)
+                        drawLine(color.copy(alpha = 0.85f), Offset(24f, h * line), Offset(w - 24f, h * line), 4f)
                     }
                 }
                 if (scanned) {
-                    Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = SoniColors.Mint, modifier = Modifier.size(72.dp))
+                    Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = SoniColors.Orange, modifier = Modifier.size(72.dp))
                 } else {
-                    Icon(Icons.Filled.QrCodeScanner, contentDescription = null, tint = Color.White.copy(alpha = 0.25f), modifier = Modifier.size(96.dp))
+                    Icon(Icons.Filled.QrCodeScanner, contentDescription = null, tint = Color.White.copy(alpha = 0.18f), modifier = Modifier.size(110.dp))
                 }
             }
+            Spacer(Modifier.height(16.dp))
+            DemoBanner(stringResource(R.string.qr_demo_notice))
+            Spacer(Modifier.height(16.dp))
             if (!scanned) {
-                Text(stringResource(R.string.qr_hint), color = SoniColors.Muted, textAlign = TextAlign.Center)
                 PrimaryButton(stringResource(R.string.qr_simulate), onClick = { scanned = true })
             } else {
                 SurfaceCard {
@@ -319,8 +407,30 @@ fun QrScannerScreen(vm: AppViewModel, onBack: () -> Unit, onDetails: (String) ->
                         }
                     )
                 }
+                Spacer(Modifier.height(12.dp))
                 SecondaryButton(stringResource(R.string.qr_scan_again), onClick = { scanned = false; amountText = "" })
             }
+            if (p1 != null || p2 != null || p3 != null) {
+                Spacer(Modifier.height(20.dp))
+                Row(
+                    Modifier.background(Color(0xFF1E1E1E), RoundedCornerShape(16.dp))
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    listOf(p1, p2, p3).forEach { b ->
+                        if (b != null) {
+                            Image(
+                                bitmap = b,
+                                contentDescription = null,
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.height(28.dp).aspectRatio(b.width.toFloat() / b.height.toFloat())
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.height(16.dp))
         }
     }
 }

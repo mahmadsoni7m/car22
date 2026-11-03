@@ -38,7 +38,8 @@ data class TransferDraft(
     val recipient: String,
     val recipientIsCard: Boolean,
     val amount: Double,
-    val comment: String
+    val comment: String,
+    val fee: Double = 0.0
 )
 
 data class PrefsState(

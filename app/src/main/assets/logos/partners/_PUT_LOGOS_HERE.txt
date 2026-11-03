@@ -1,0 +1,9 @@
+PUT YOUR LOGO FILES IN THIS FOLDER.
+Use exactly these names (png, webp or jpg), then rebuild the app:
+
+  qr_partner_1.png  - QR screen, bottom strip, logo 1
+  qr_partner_2.png  - QR screen, bottom strip, logo 2
+  qr_partner_3.png  - QR screen, bottom strip, logo 3
+
+If a file is missing the app shows a neutral icon instead.
+Use only logos you own or have written permission to use.

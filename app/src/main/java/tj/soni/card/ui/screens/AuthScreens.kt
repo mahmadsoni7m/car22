@@ -72,7 +72,7 @@ fun SplashScreen(vm: AppViewModel, onRoute: (String) -> Unit) {
 
     Box(Modifier.fillMaxSize().background(SoniColors.Background), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            SoniLogoMark(logoSize = 96.dp, modifier = Modifier.scale(scale))
+            AppLogo(96.dp, Modifier.scale(scale))
             Spacer(Modifier.height(24.dp))
             Text(
                 stringResource(R.string.app_name),
@@ -187,7 +187,7 @@ fun WelcomeScreen(onLogin: () -> Unit, onRegister: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(48.dp))
-        SoniLogoMark(logoSize = 88.dp)
+        AppLogo(88.dp)
         Spacer(Modifier.height(24.dp))
         Text(
             stringResource(R.string.welcome_title),
@@ -507,21 +507,13 @@ fun PinScreen(
 
     Column(Modifier.fillMaxSize()) {
         if (onBack != null) ScreenHeader(stringResource(R.string.pin_title), onBack)
+        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+            AppLogo(120.dp)
+        }
         Column(
-            Modifier.weight(1f).fillMaxWidth().padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SoniLogoMark(logoSize = 80.dp)
-            Spacer(Modifier.height(8.dp))
-            Text(
-                stringResource(R.string.app_name),
-                color = SoniColors.Navy,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                letterSpacing = 2.sp
-            )
-            Spacer(Modifier.height(32.dp))
             Text(
                 stringResource(titleRes),
                 fontSize = 24.sp,
@@ -529,7 +521,7 @@ fun PinScreen(
                 color = SoniColors.Navy,
                 textAlign = TextAlign.Center
             )
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
                     repeat(4) { i ->
@@ -550,10 +542,9 @@ fun PinScreen(
                     )
                 }
             }
-            Box(Modifier.height(28.dp), contentAlignment = Alignment.Center) {
+            Box(Modifier.height(26.dp), contentAlignment = Alignment.Center) {
                 ErrorText(errorRes?.let { stringResource(it) })
             }
-            Spacer(Modifier.height(8.dp))
             val rows = listOf(listOf("1", "2", "3"), listOf("4", "5", "6"), listOf("7", "8", "9"))
             rows.forEach { row ->
                 Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -563,7 +554,7 @@ fun PinScreen(
                         }
                     }
                 }
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(14.dp))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 if (mode == Routes.PIN_LOGIN) {
@@ -577,17 +568,17 @@ fun PinScreen(
                         )
                     }
                 } else {
-                    Spacer(Modifier.size(80.dp))
+                    Spacer(Modifier.size(72.dp))
                 }
                 PinKey(onClick = { press("0") }) {
                     Text("0", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = SoniColors.Navy)
                 }
                 if (bioEnabled) {
                     PinKey(onClick = { promptBiometric() }) {
-                        Icon(Icons.Filled.Fingerprint, contentDescription = stringResource(R.string.bio_title), tint = SoniColors.Teal, modifier = Modifier.size(34.dp))
+                        Icon(Icons.Filled.Fingerprint, contentDescription = stringResource(R.string.bio_title), tint = SoniColors.Teal, modifier = Modifier.size(32.dp))
                     }
                 } else {
-                    Spacer(Modifier.size(80.dp))
+                    Spacer(Modifier.size(72.dp))
                 }
             }
         }
@@ -608,7 +599,7 @@ fun PinScreen(
 @Composable
 private fun PinKey(onClick: () -> Unit, content: @Composable () -> Unit) {
     Box(
-        Modifier.size(80.dp)
+        Modifier.size(72.dp)
             .shadow(4.dp, CircleShape, ambientColor = Color(0x330A74F5), spotColor = Color(0x330A74F5))
             .background(SoniColors.Surface, CircleShape)
             .clickable(onClick = onClick),

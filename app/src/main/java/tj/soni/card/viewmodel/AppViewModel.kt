@@ -2,6 +2,7 @@ package tj.soni.card.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -45,6 +46,26 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     var pendingIsRegistration by mutableStateOf(false)
     var pendingTransfer by mutableStateOf<TransferDraft?>(null)
 
+    /** Quick-access shortcuts on the home screen (session only). */
+    val favorites = mutableStateListOf(*DEFAULT_FAVORITES.toTypedArray())
+
+    /** Last recipients, session only: "p:<9 digits>" or "c:<16 digits>". */
+    val recentRecipients = mutableStateListOf<String>()
+
+    fun toggleFavorite(key: String) {
+        if (!favorites.remove(key)) favorites.add(key)
+    }
+
+    fun removeFavorite(key: String) {
+        favorites.remove(key)
+    }
+
+    fun rememberRecipient(entry: String) {
+        recentRecipients.remove(entry)
+        recentRecipients.add(0, entry)
+        while (recentRecipients.size > 5) recentRecipients.removeAt(recentRecipients.size - 1)
+    }
+
     fun completeOnboarding() {
         viewModelScope.launch { prefs.setOnboarded(true) }
     }
@@ -87,6 +108,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             repo.reset()
             unlocked = false
             pendingTransfer = null
+            favorites.clear()
+            favorites.addAll(DEFAULT_FAVORITES)
+            recentRecipients.clear()
         }
     }
 
@@ -103,5 +127,6 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     companion object {
         const val DEFAULT_NAME = "Demo User"
+        val DEFAULT_FAVORITES = listOf("transfer:phone", "transfer:card", "svc:mobile", "topup")
     }
 }

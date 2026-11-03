@@ -292,4 +292,23 @@
     <string name="miniapps_title">Сервисы</string>
     <string name="refresh">Обновить</string>
     <string name="menu">Меню</string>
+    <string name="share_text">Попробуйте SONI CARD: демо-приложение цифрового банка.</string>
+    <string name="drawer_share">Поделиться приложением</string>
+    <string name="version_build">Версия: %1$s  Сборка: %2$d</string>
+    <string name="tr_inter_title">На карты других банков (Корти Милли)</string>
+    <string name="tr_inter_desc">Укажите номер карты Корти Милли и сумму перевода. Комиссия: 1% (ДЕМО).</string>
+    <string name="recent_title">Недавние получатели</string>
+    <string name="recent_empty">Недавних получателей пока нет.</string>
+    <string name="pick_contact">Выбрать из контактов</string>
+    <string name="no_contacts_app">Приложение «Контакты» не найдено</string>
+    <string name="add_favorite">Добавить в избранное</string>
+    <string name="remove_favorite">Убрать из избранного</string>
+    <string name="grp_all">Все</string>
+    <string name="grp_payments">Платежи</string>
+    <string name="grp_utilities">Коммунальные услуги</string>
+    <string name="grp_transport">Транспорт</string>
+    <string name="qr_aim">Наведите камеру на QR-код</string>
+    <string name="updated_at">Обновлено</string>
+    <string name="close">Закрыть</string>
+    <string name="fav_section">Избранное</string>
 </resources>

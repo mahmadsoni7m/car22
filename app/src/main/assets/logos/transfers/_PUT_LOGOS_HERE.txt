@@ -1,0 +1,9 @@
+PUT YOUR LOGO FILES IN THIS FOLDER.
+Use exactly these names (png, webp or jpg), then rebuild the app:
+
+  transfer_phone.png  - Transfer by phone number
+  transfer_card.png  - Transfer by card number
+  transfer_interbank.png  - Transfer to other banks
+
+If a file is missing the app shows a neutral icon instead.
+Use only logos you own or have written permission to use.

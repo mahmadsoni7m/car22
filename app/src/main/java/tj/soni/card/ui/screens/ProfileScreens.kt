@@ -415,7 +415,7 @@ fun AboutScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            SoniLogoMark(logoSize = 88.dp)
+            AppLogo(88.dp)
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium, color = SoniColors.Navy, letterSpacing = 2.sp)
             Text(stringResource(R.string.version_format, BuildConfig.VERSION_NAME), color = SoniColors.Muted)
             Text(stringResource(R.string.about_text), color = SoniColors.Navy, textAlign = TextAlign.Center)

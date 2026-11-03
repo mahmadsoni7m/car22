@@ -34,3 +34,6 @@ fun formatDay(timestamp: Long): String =
 
 fun formatTime(timestamp: Long): String =
     SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date(timestamp))
+
+fun formatPlain(value: Double): String =
+    String.format(Locale.US, "%,.2f", value).replace(',', ' ')

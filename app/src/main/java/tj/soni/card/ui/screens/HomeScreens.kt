@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -17,7 +18,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import android.content.Intent
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
+import tj.soni.card.BuildConfig
+import tj.soni.card.domain.formatPlain
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -42,6 +47,17 @@ import tj.soni.card.viewmodel.AppViewModel
 
 // ---------------------------------------------------------------- 9. Dashboard
 
+private data class FavDef(val key: String, val label: Int, val icon: ImageVector, val logo: String, val route: String)
+
+private val favDefs = listOf(
+    FavDef("transfer:phone", R.string.tr_phone_title, Icons.Filled.PhoneAndroid, "transfers/transfer_phone", Routes.transferForm("phone")),
+    FavDef("transfer:card", R.string.tr_card_title, Icons.Filled.CreditCard, "transfers/transfer_card", Routes.transferForm("card")),
+    FavDef("transfer:interbank", R.string.tr_inter_title, Icons.Filled.AccountBalance, "transfers/transfer_interbank", Routes.transferForm("interbank")),
+    FavDef("svc:mobile", R.string.svc_mobile, Icons.Filled.PhoneAndroid, "services/mobile", Routes.PAYMENTS),
+    FavDef("svc:internet", R.string.svc_internet, Icons.Filled.Wifi, "services/internet", Routes.PAYMENTS),
+    FavDef("topup", R.string.top_up, Icons.Filled.AddCard, "tiles/topup", Routes.TOPUP)
+)
+
 @Composable
 fun DashboardScreen(
     vm: AppViewModel,
@@ -53,6 +69,7 @@ fun DashboardScreen(
     val balance by vm.balance.collectAsStateWithLifecycle()
     val txs by vm.transactions.collectAsStateWithLifecycle()
     val notifs by vm.notifications.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var updatedAt by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -62,10 +79,22 @@ fun DashboardScreen(
     val name = settings?.name.orEmpty().ifBlank { AppViewModel.DEFAULT_NAME }
     val phone = settings?.phone.orEmpty()
     val unread = notifs.count { !it.read }
+    val shareText = stringResource(R.string.share_text)
+    val versionLine = stringResource(R.string.version_build, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+    val favorites = vm.favorites.toList()
 
     fun go(route: String) {
         scope.launch { drawerState.close() }
         onNavigate(route)
+    }
+
+    val share: () -> Unit = {
+        scope.launch { drawerState.close() }
+        val send = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+        }
+        context.startActivity(Intent.createChooser(send, null))
     }
 
     ModalNavigationDrawer(
@@ -75,24 +104,33 @@ fun DashboardScreen(
                 Column(Modifier.verticalScroll(rememberScrollState())) {
                     DrawerHeader(name, phone) { go(Routes.PROFILE) }
                     Spacer(Modifier.height(8.dp))
-                    val items = listOf(
-                        Triple(Icons.Filled.Security, R.string.security_center, Routes.SECURITY),
-                        Triple(Icons.Filled.CreditCard, R.string.my_cards, Routes.CARDS),
-                        Triple(Icons.Filled.PieChart, R.string.statistics, Routes.STATS),
-                        Triple(Icons.Filled.Settings, R.string.settings, Routes.SETTINGS),
-                        Triple(Icons.Filled.Language, R.string.language, Routes.LANGUAGE),
-                        Triple(Icons.Filled.SupportAgent, R.string.support, Routes.SUPPORT),
-                        Triple(Icons.Filled.Quiz, R.string.faq, Routes.FAQ),
-                        Triple(Icons.Filled.Info, R.string.about, Routes.ABOUT)
+                    val main = listOf<Triple<ImageVector, Int, () -> Unit>>(
+                        Triple(Icons.Filled.Security, R.string.security_center, { go(Routes.SECURITY) }),
+                        Triple(Icons.Filled.SupportAgent, R.string.support, { go(Routes.SUPPORT) }),
+                        Triple(Icons.Filled.Settings, R.string.settings, { go(Routes.SETTINGS) }),
+                        Triple(Icons.Filled.Quiz, R.string.faq, { go(Routes.FAQ) }),
+                        Triple(Icons.Filled.Share, R.string.drawer_share, share)
                     )
-                    items.forEach { (icon, label, route) ->
+                    main.forEach { (icon, label, action) ->
                         Box(Modifier.padding(horizontal = 16.dp)) {
-                            SettingsRow(icon, stringResource(label), onClick = { go(route) })
+                            SettingsRow(icon, stringResource(label), onClick = action)
+                        }
+                    }
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), color = SoniColors.Border)
+                    val more = listOf<Triple<ImageVector, Int, () -> Unit>>(
+                        Triple(Icons.Filled.CreditCard, R.string.my_cards, { go(Routes.CARDS) }),
+                        Triple(Icons.Filled.PieChart, R.string.statistics, { go(Routes.STATS) }),
+                        Triple(Icons.Filled.Language, R.string.language, { go(Routes.LANGUAGE) }),
+                        Triple(Icons.Filled.Info, R.string.about, { go(Routes.ABOUT) })
+                    )
+                    more.forEach { (icon, label, action) ->
+                        Box(Modifier.padding(horizontal = 16.dp)) {
+                            SettingsRow(icon, stringResource(label), onClick = action)
                         }
                     }
                     Box(
                         Modifier.padding(16.dp).fillMaxWidth()
-                            .background(Color(0xFFFDECEC), RoundedCornerShape(20.dp))
+                            .background(Color(0xFFFDECEC), RoundedCornerShape(22.dp))
                             .clickable { confirmLogout = true }
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
@@ -100,138 +138,163 @@ fun DashboardScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Filled.PowerSettingsNew, contentDescription = null, tint = SoniColors.Error)
                             Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.logout), color = SoniColors.Error, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.logout), color = SoniColors.Error, fontWeight = FontWeight.Bold, fontSize = 17.sp)
                         }
                     }
+                    Text(
+                        versionLine,
+                        color = SoniColors.Muted,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+                    )
                 }
             }
         }
     ) {
-        LazyColumn(
-            Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                        Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.menu), tint = SoniColors.Teal)
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            Row(Modifier.padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                    Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.menu), tint = SoniColors.Teal, modifier = Modifier.size(30.dp))
+                }
+                Spacer(Modifier.weight(1f))
+                Box {
+                    IconButton(onClick = { onNavigate(Routes.NOTIFICATIONS) }) {
+                        Icon(Icons.Filled.NotificationsNone, contentDescription = stringResource(R.string.notifications), tint = SoniColors.Teal, modifier = Modifier.size(28.dp))
                     }
-                    Spacer(Modifier.weight(1f))
-                    Box {
-                        IconButton(onClick = { onNavigate(Routes.NOTIFICATIONS) }) {
-                            Icon(Icons.Filled.Notifications, contentDescription = stringResource(R.string.notifications), tint = SoniColors.Teal)
-                        }
-                        if (unread > 0) {
-                            Box(
-                                Modifier.align(Alignment.TopEnd).padding(8.dp).size(16.dp)
-                                    .background(SoniColors.Error, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) { Text(unread.toString(), color = Color.White, fontSize = 10.sp) }
-                        }
-                    }
-                    IconButton(onClick = { onNavigate(Routes.SUPPORT) }) {
-                        Icon(Icons.Filled.SupportAgent, contentDescription = stringResource(R.string.support), tint = SoniColors.Teal)
-                    }
-                    IconButton(onClick = { onNavigate(Routes.HISTORY) }) {
-                        Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search), tint = SoniColors.Teal)
+                    if (unread > 0) {
+                        Box(
+                            Modifier.align(Alignment.TopEnd).padding(8.dp).size(16.dp)
+                                .background(SoniColors.Error, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) { Text(unread.toString(), color = Color.White, fontSize = 10.sp) }
                     }
                 }
+                IconButton(onClick = { onNavigate(Routes.SUPPORT) }) {
+                    Icon(Icons.Filled.SupportAgent, contentDescription = stringResource(R.string.support), tint = SoniColors.Teal, modifier = Modifier.size(28.dp))
+                }
+                IconButton(onClick = { onNavigate(Routes.HISTORY) }) {
+                    Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search), tint = SoniColors.Teal, modifier = Modifier.size(28.dp))
+                }
             }
-            item { DemoBanner() }
-            item {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Box(
-                        Modifier.weight(1f).height(112.dp)
-                            .shadow(6.dp, RoundedCornerShape(28.dp), ambientColor = Color(0x660A74F5), spotColor = Color(0x660A74F5))
-                            .background(
-                                Brush.horizontalGradient(listOf(Color(0xFF0A74F5), Color(0xFF0A62E0))),
-                                RoundedCornerShape(28.dp)
-                            )
-                            .padding(horizontal = 20.dp, vertical = 16.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Column(Modifier.weight(1f)) {
+            Row(
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    Modifier.weight(1f).height(100.dp)
+                        .shadow(6.dp, RoundedCornerShape(28.dp), ambientColor = Color(0x660A74F5), spotColor = Color(0x660A74F5))
+                        .background(
+                            Brush.horizontalGradient(listOf(Color(0xFF0A78FF), Color(0xFF0A68EE))),
+                            RoundedCornerShape(28.dp)
+                        )
+                        .padding(horizontal = 20.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
-                                    if (hidden) "*****" else formatMoney(balance),
+                                    if (hidden) "*****" else formatPlain(balance),
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 26.sp,
+                                    fontSize = 30.sp,
                                     maxLines = 1
                                 )
-                                Spacer(Modifier.height(4.dp))
-                                Text(formatStamp(updatedAt), color = Color(0xB3FFFFFF), fontSize = 13.sp)
+                                Spacer(Modifier.width(6.dp))
+                                Text("TJS", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 5.dp))
                             }
-                            IconButton(onClick = { vm.setBalanceHidden(!hidden) }) {
-                                Icon(
-                                    if (hidden) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                                    contentDescription = stringResource(if (hidden) R.string.show_balance else R.string.hide_balance),
-                                    tint = Color.White
-                                )
-                            }
-                            IconButton(onClick = { updatedAt = System.currentTimeMillis() }) {
-                                Icon(Icons.Filled.Sync, contentDescription = stringResource(R.string.refresh), tint = Color.White)
-                            }
+                            Text(formatStamp(updatedAt), color = Color(0xB3FFFFFF), fontSize = 13.sp)
+                        }
+                        IconButton(onClick = { vm.setBalanceHidden(!hidden) }) {
+                            Icon(
+                                if (hidden) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                                contentDescription = stringResource(if (hidden) R.string.show_balance else R.string.hide_balance),
+                                tint = Color.White
+                            )
+                        }
+                        IconButton(onClick = { updatedAt = System.currentTimeMillis() }) {
+                            Icon(Icons.Filled.Sync, contentDescription = stringResource(R.string.refresh), tint = Color.White)
                         }
                     }
-                    Box(
-                        Modifier.width(64.dp).height(112.dp)
-                            .shadow(3.dp, RoundedCornerShape(24.dp), ambientColor = Color(0x330A74F5), spotColor = Color(0x330A74F5))
-                            .background(Color.White, RoundedCornerShape(24.dp))
-                            .clickable { onNavigate(Routes.QR) },
-                        contentAlignment = Alignment.Center
+                }
+                Box(
+                    Modifier.width(52.dp).height(100.dp)
+                        .shadow(3.dp, RoundedCornerShape(24.dp), ambientColor = Color(0x330A74F5), spotColor = Color(0x330A74F5))
+                        .background(Color.White, RoundedCornerShape(24.dp))
+                        .clickable { onNavigate(Routes.QR) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Filled.QrCode2, contentDescription = stringResource(R.string.qr_scanner), tint = SoniColors.Teal, modifier = Modifier.size(30.dp))
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Column(
+                Modifier.fillMaxWidth().defaultMinSize(minHeight = 640.dp)
+                    .background(Color(0xFFF8FAFF), RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                DemoBanner()
+                if (favorites.isNotEmpty()) {
+                    Row(
+                        Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(Icons.Filled.QrCode2, contentDescription = stringResource(R.string.qr_scanner), tint = SoniColors.Teal, modifier = Modifier.size(32.dp))
+                        favorites.mapNotNull { key -> favDefs.firstOrNull { it.key == key } }.forEach { def ->
+                            FavTile(def, onClick = { onNavigate(def.route) }, onRemove = { vm.removeFavorite(def.key) })
+                        }
                     }
                 }
-            }
-            item {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    item { FavTile(Icons.Filled.PhoneAndroid, stringResource(R.string.tr_phone_title)) { onNavigate(Routes.transferForm("phone")) } }
-                    item { FavTile(Icons.Filled.CreditCard, stringResource(R.string.tr_card_title)) { onNavigate(Routes.transferForm("card")) } }
-                    item { FavTile(Icons.Filled.Payments, stringResource(R.string.svc_mobile)) { onNavigate(Routes.PAYMENTS) } }
-                    item { FavTile(Icons.Filled.AddCard, stringResource(R.string.top_up)) { onNavigate(Routes.TOPUP) } }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Filled.Apps, contentDescription = null, tint = SoniColors.Teal, modifier = Modifier.size(22.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        stringResource(R.string.miniapps_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = SoniColors.Navy,
+                        modifier = Modifier.weight(1f)
+                    )
+                    TextButton(onClick = { onNavigate(Routes.PAYMENTS) }) {
+                        Text(stringResource(R.string.see_all), color = SoniColors.Teal, fontWeight = FontWeight.SemiBold)
+                    }
                 }
-            }
-            item { SectionTitle(stringResource(R.string.miniapps_title), stringResource(R.string.see_all)) { onNavigate(Routes.PAYMENTS) } }
-            item {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    item { MiniChip(Icons.Filled.Payments, stringResource(R.string.payments)) { onNavigate(Routes.PAYMENTS) } }
-                    item { MiniChip(Icons.Filled.AddCard, stringResource(R.string.top_up)) { onNavigate(Routes.TOPUP) } }
-                    item { MiniChip(Icons.Filled.AccountBalanceWallet, stringResource(R.string.withdraw)) { onNavigate(Routes.WITHDRAW) } }
-                    item { MiniChip(Icons.Filled.PieChart, stringResource(R.string.statistics)) { onNavigate(Routes.STATS) } }
+                Row(
+                    Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    MiniChip(Icons.Filled.Payments, "tiles/payments", stringResource(R.string.payments)) { onNavigate(Routes.PAYMENTS) }
+                    MiniChip(Icons.Filled.AddCard, "tiles/topup", stringResource(R.string.top_up)) { onNavigate(Routes.TOPUP) }
+                    MiniChip(Icons.Filled.AccountBalanceWallet, "tiles/withdraw", stringResource(R.string.withdraw)) { onNavigate(Routes.WITHDRAW) }
+                    MiniChip(Icons.Filled.PieChart, "tiles/statistics", stringResource(R.string.statistics)) { onNavigate(Routes.STATS) }
                 }
-            }
-            item {
-                SurfaceCard(Modifier, onClick = null) {
+                SurfaceCard {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        ServiceMini(Icons.Filled.PhoneAndroid, stringResource(R.string.svc_mobile), Color(0xFF2E9E5B), Modifier.weight(1f)) { onNavigate(Routes.PAYMENTS) }
+                        ServiceMini(Icons.Filled.PhoneAndroid, "services/mobile", stringResource(R.string.svc_mobile), Color(0xFF2E9E5B), Modifier.weight(1f)) { onNavigate(Routes.PAYMENTS) }
                         Box(Modifier.width(1.dp).height(32.dp).background(SoniColors.Border))
-                        ServiceMini(Icons.Filled.Wifi, stringResource(R.string.svc_internet), Color(0xFF8E44AD), Modifier.weight(1f)) { onNavigate(Routes.PAYMENTS) }
+                        ServiceMini(Icons.Filled.Wifi, "services/internet", stringResource(R.string.svc_internet), Color(0xFF8E44AD), Modifier.weight(1f)) { onNavigate(Routes.PAYMENTS) }
                         Box(Modifier.width(1.dp).height(32.dp).background(SoniColors.Border))
-                        ServiceMini(Icons.Filled.ElectricBolt, stringResource(R.string.svc_electricity), SoniColors.Orange, Modifier.weight(1f)) { onNavigate(Routes.PAYMENTS) }
+                        ServiceMini(Icons.Filled.ElectricBolt, "services/electricity", stringResource(R.string.svc_electricity), SoniColors.Orange, Modifier.weight(1f)) { onNavigate(Routes.PAYMENTS) }
                     }
                 }
-            }
-            item {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Tile(stringResource(R.string.payments), stringResource(R.string.svc_mobile), Icons.Filled.Payments, Color(0xFF0A74F5), Modifier.weight(2f)) { onNavigate(Routes.PAYMENTS) }
-                    Tile(stringResource(R.string.my_cards), null, Icons.Filled.CreditCard, Color(0xFFE0A800), Modifier.weight(1.2f)) { onNavigate(Routes.CARDS) }
+                    Tile(stringResource(R.string.payments), stringResource(R.string.svc_mobile), Icons.Filled.Payments, "tiles/payments", Color(0xFF0A74F5), Modifier.weight(2f)) { onNavigate(Routes.PAYMENTS) }
+                    Tile(stringResource(R.string.my_cards), null, Icons.Filled.CreditCard, "tiles/cards", Color(0xFFE0A800), Modifier.weight(1f)) { onNavigate(Routes.CARDS) }
                 }
-            }
-            item {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Tile(stringResource(R.string.top_up), null, Icons.Filled.AddCard, Color(0xFF2E9E5B), Modifier.weight(1f)) { onNavigate(Routes.TOPUP) }
-                    Tile(stringResource(R.string.withdraw), null, Icons.Filled.AccountBalanceWallet, Color(0xFFD6457B), Modifier.weight(1f)) { onNavigate(Routes.WITHDRAW) }
-                    Tile(stringResource(R.string.statistics), null, Icons.Filled.PieChart, Color(0xFF8E44AD), Modifier.weight(1f)) { onNavigate(Routes.STATS) }
+                    Tile(stringResource(R.string.top_up), null, Icons.Filled.AddCard, "tiles/topup", Color(0xFF2E9E5B), Modifier.weight(1f)) { onNavigate(Routes.TOPUP) }
+                    Tile(stringResource(R.string.withdraw), null, Icons.Filled.AccountBalanceWallet, "tiles/withdraw", Color(0xFFD6457B), Modifier.weight(1f)) { onNavigate(Routes.WITHDRAW) }
+                    Tile(stringResource(R.string.statistics), null, Icons.Filled.PieChart, "tiles/statistics", Color(0xFF8E44AD), Modifier.weight(1f)) { onNavigate(Routes.STATS) }
                 }
-            }
-            item { SectionTitle(stringResource(R.string.recent_transactions), stringResource(R.string.see_all)) { onNavigate(Routes.HISTORY) } }
-            if (txs.isEmpty()) {
-                item { EmptyState(Icons.Filled.History, stringResource(R.string.empty_tx_title), stringResource(R.string.empty_tx_text)) }
-            } else {
-                item {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Tile(stringResource(R.string.history), null, Icons.Filled.History, "tiles/history", Color(0xFF607D8B), Modifier.weight(1f)) { onNavigate(Routes.HISTORY) }
+                    Tile(stringResource(R.string.notifications), null, Icons.Filled.Notifications, "tiles/notifications", Color(0xFFFF7525), Modifier.weight(1f)) { onNavigate(Routes.NOTIFICATIONS) }
+                    Tile(stringResource(R.string.security_center), null, Icons.Filled.Security, "tiles/security", Color(0xFF0A74F5), Modifier.weight(1f)) { onNavigate(Routes.SECURITY) }
+                }
+                SectionTitle(stringResource(R.string.recent_transactions), stringResource(R.string.see_all)) { onNavigate(Routes.HISTORY) }
+                if (txs.isEmpty()) {
+                    EmptyState(Icons.Filled.History, stringResource(R.string.empty_tx_title), stringResource(R.string.empty_tx_text))
+                } else {
                     SurfaceCard {
                         txs.take(5).forEachIndexed { i, tx ->
                             if (i > 0) RowDivider()
@@ -239,8 +302,8 @@ fun DashboardScreen(
                         }
                     }
                 }
+                Spacer(Modifier.height(24.dp))
             }
-            item { Spacer(Modifier.height(24.dp)) }
         }
     }
 
@@ -266,11 +329,16 @@ private fun DrawerHeader(name: String, phone: String, onClick: () -> Unit) {
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(64.dp).background(Color(0x33FFFFFF), RoundedCornerShape(20.dp)),
+                Modifier.size(64.dp)
+                    .background(Color(0x33FFFFFF), RoundedCornerShape(20.dp))
+                    .border(1.dp, Color(0x55FFFFFF), RoundedCornerShape(20.dp)),
                 contentAlignment = Alignment.Center
             ) { Text(initialsOf(name), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 24.sp) }
             Spacer(Modifier.weight(1f))
-            SoniLogoMark(logoSize = 44.dp)
+            Box(
+                Modifier.size(56.dp).background(Color.White, RoundedCornerShape(16.dp)),
+                contentAlignment = Alignment.Center
+            ) { AppLogo(40.dp) }
         }
         Spacer(Modifier.height(16.dp))
         Text(name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
@@ -289,73 +357,91 @@ private fun DrawerHeader(name: String, phone: String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun FavTile(icon: ImageVector, label: String, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(20.dp)
-    Column(
-        Modifier.width(104.dp)
-            .shadow(2.dp, shape, ambientColor = Color(0x330A74F5), spotColor = Color(0x330A74F5))
-            .background(Color.White, shape)
-            .clickable(onClick = onClick)
-            .padding(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(Modifier.size(44.dp).background(SoniColors.MintSoft, CircleShape), contentAlignment = Alignment.Center) {
-            Icon(icon, contentDescription = null, tint = SoniColors.Teal)
+private fun FavTile(def: FavDef, onClick: () -> Unit, onRemove: () -> Unit) {
+    val shape = RoundedCornerShape(18.dp)
+    Box(Modifier.width(92.dp)) {
+        Column(
+            Modifier.fillMaxWidth()
+                .shadow(2.dp, shape, ambientColor = Color(0x330A74F5), spotColor = Color(0x330A74F5))
+                .background(Color.White, shape)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 8.dp, vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LogoBox(def.logo, def.icon, 40.dp, SoniColors.Teal, SoniColors.MintSoft, 20.dp)
+            Spacer(Modifier.height(6.dp))
+            Text(
+                stringResource(def.label),
+                color = SoniColors.Navy,
+                fontSize = 11.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 3,
+                lineHeight = 14.sp
+            )
         }
-        Spacer(Modifier.height(6.dp))
-        Text(label, color = SoniColors.Navy, fontSize = 12.sp, textAlign = TextAlign.Center, maxLines = 3, lineHeight = 15.sp)
+        Box(
+            Modifier.align(Alignment.TopEnd).padding(4.dp).size(22.dp).clickable(onClick = onRemove),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.remove_favorite), tint = SoniColors.Muted, modifier = Modifier.size(15.dp))
+        }
     }
 }
 
 @Composable
-private fun MiniChip(icon: ImageVector, label: String, onClick: () -> Unit) {
+private fun MiniChip(icon: ImageVector, logo: String, label: String, onClick: () -> Unit) {
     val shape = RoundedCornerShape(50)
     Row(
         Modifier.background(Color.White, shape)
             .border(1.5.dp, Color(0xFFCFE0FF), shape)
             .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 10.dp),
+            .padding(start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = SoniColors.Teal, modifier = Modifier.size(22.dp))
+        LogoBox(logo, icon, 30.dp, SoniColors.Teal, SoniColors.MintSoft, 15.dp)
         Spacer(Modifier.width(8.dp))
         Text(label, color = SoniColors.Navy, fontWeight = FontWeight.SemiBold)
     }
 }
 
 @Composable
-private fun ServiceMini(icon: ImageVector, label: String, tint: Color, modifier: Modifier, onClick: () -> Unit) {
+private fun ServiceMini(icon: ImageVector, logo: String, label: String, tint: Color, modifier: Modifier, onClick: () -> Unit) {
     Row(
-        modifier.clickable(onClick = onClick).padding(horizontal = 6.dp),
+        modifier.clickable(onClick = onClick).padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        Box(Modifier.size(36.dp).background(tint.copy(alpha = 0.15f), CircleShape), contentAlignment = Alignment.Center) {
-            Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(20.dp))
-        }
+        LogoBox(logo, icon, 34.dp, tint, tint.copy(alpha = 0.15f), 17.dp)
         Spacer(Modifier.width(6.dp))
         Text(label, color = SoniColors.Navy, fontWeight = FontWeight.SemiBold, fontSize = 13.sp, maxLines = 1)
     }
 }
 
 @Composable
-private fun Tile(title: String, subtitle: String?, icon: ImageVector, tint: Color, modifier: Modifier, onClick: () -> Unit) {
+private fun Tile(
+    title: String,
+    subtitle: String?,
+    icon: ImageVector,
+    logo: String,
+    tint: Color,
+    modifier: Modifier,
+    onClick: () -> Unit
+) {
     val shape = RoundedCornerShape(22.dp)
     Box(
-        modifier.height(112.dp)
+        modifier.height(100.dp)
             .shadow(3.dp, shape, ambientColor = Color(0x330A74F5), spotColor = Color(0x330A74F5))
             .background(Color.White, shape)
             .clickable(onClick = onClick)
     ) {
         Column(Modifier.padding(14.dp)) {
-            Text(title, color = SoniColors.Navy, fontWeight = FontWeight.Bold, fontSize = 16.sp, maxLines = 2)
-            if (subtitle != null) Text(subtitle, color = SoniColors.Muted, fontSize = 13.sp)
+            Text(title, color = SoniColors.Navy, fontWeight = FontWeight.Bold, fontSize = 15.sp, maxLines = 2, lineHeight = 18.sp)
+            if (subtitle != null) Text(subtitle, color = SoniColors.Muted, fontSize = 12.sp)
         }
-        Box(
-            Modifier.align(Alignment.BottomEnd).padding(10.dp).size(44.dp)
-                .background(tint.copy(alpha = 0.16f), RoundedCornerShape(14.dp)),
-            contentAlignment = Alignment.Center
-        ) { Icon(icon, contentDescription = null, tint = tint) }
+        LogoBox(
+            logo, icon, 42.dp, tint, tint.copy(alpha = 0.16f), 14.dp,
+            Modifier.align(Alignment.BottomEnd).padding(10.dp)
+        )
     }
 }
 

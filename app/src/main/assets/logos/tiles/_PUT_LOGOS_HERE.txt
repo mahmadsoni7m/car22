@@ -1,0 +1,14 @@
+PUT YOUR LOGO FILES IN THIS FOLDER.
+Use exactly these names (png, webp or jpg), then rebuild the app:
+
+  payments.png  - Payments tile
+  cards.png  - Cards tile
+  topup.png  - Top up tile
+  withdraw.png  - Withdraw tile
+  statistics.png  - Statistics tile
+  history.png  - History tile
+  notifications.png  - Notifications tile
+  security.png  - Security tile
+
+If a file is missing the app shows a neutral icon instead.
+Use only logos you own or have written permission to use.

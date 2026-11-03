@@ -315,7 +315,8 @@ fun SoniTextField(
     error: String? = null,
     prefix: String? = null,
     singleLine: Boolean = true,
-    minLines: Int = 1
+    minLines: Int = 1,
+    trailing: @Composable (() -> Unit)? = null
 ) {
     Column(modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -323,6 +324,7 @@ fun SoniTextField(
             onValueChange = onValueChange,
             label = { Text(label) },
             prefix = prefix?.let { pre -> { Text(pre) } },
+            trailingIcon = trailing,
             isError = error != null,
             singleLine = singleLine,
             minLines = minLines,
@@ -452,7 +454,7 @@ fun SettingsRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            Modifier.size(40.dp).background(SoniColors.MintSoft, RoundedCornerShape(12.dp)),
+            Modifier.size(40.dp).background(SoniColors.Field, RoundedCornerShape(12.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(icon, contentDescription = null, tint = SoniColors.Teal, modifier = Modifier.size(22.dp))

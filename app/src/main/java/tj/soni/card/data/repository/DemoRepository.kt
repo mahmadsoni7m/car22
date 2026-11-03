@@ -42,7 +42,7 @@ class DemoRepository(private val clock: () -> Long = { System.currentTimeMillis(
     fun findTransaction(id: String): Transaction? = _transactions.value.firstOrNull { it.id == id }
 
     fun transfer(draft: TransferDraft): Transaction? =
-        spend(TxCategory.TRANSFER, maskRecipient(draft), draft.amount, draft.comment)
+        spend(TxCategory.TRANSFER, maskRecipient(draft), draft.amount + draft.fee, draft.comment)
 
     fun pay(merchant: String, amount: Double, category: TxCategory = TxCategory.PAYMENT): Transaction? =
         spend(category, merchant, amount, "")

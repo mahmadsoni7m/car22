@@ -1,0 +1,14 @@
+PUT YOUR LOGO FILES IN THIS FOLDER.
+Use exactly these names (png, webp or jpg), then rebuild the app:
+
+  mobile.png  - Mobile
+  internet.png  - Internet
+  electricity.png  - Electricity
+  water.png  - Water
+  gas.png  - Gas
+  tv.png  - Television
+  education.png  - Education
+  transport.png  - Transport
+
+If a file is missing the app shows a neutral icon instead.
+Use only logos you own or have written permission to use.

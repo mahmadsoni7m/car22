@@ -69,6 +69,10 @@ Blue (#0A74F5) + orange action buttons, light background, soft shadows, round ca
 floating bottom bar with a central QR button, bottom-sheet payment confirmation, Operations / Statement tabs.
 The logo, name and all texts are original SONI CARD. No third-party logos or brand assets are used.
 
+## Логотипҳо / Logos
+Файлҳои логотипро ба `app/src/main/assets/logos/` андозед (номҳои дақиқ дар `LOGOS.md` ва дар ҳар папка `_PUT_LOGOS_HERE.txt`). Бе тағйири код ба барнома меояд. Агар файл набошад, аломати оддӣ нишон дода мешавад.
+Drop PNG/WEBP/JPG files into `app/src/main/assets/logos/<folder>/` with the exact names listed in `LOGOS.md`; no code changes needed.
+
 ## Security notes
 - PIN is never stored: only a PBKDF2 hash with salt, additionally encrypted with an Android Keystore key.
 - No real card numbers, CVV, bank passwords or SMS credentials are collected or generated. Cards show masked numbers only.

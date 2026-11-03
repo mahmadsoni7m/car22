@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.shape.RoundedCornerShape
 import tj.soni.card.data.models.Transaction
 import tj.soni.card.domain.formatDay
+import tj.soni.card.domain.formatStamp
 import tj.soni.card.domain.formatTime
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -49,6 +50,8 @@ fun HistoryScreen(vm: AppViewModel, onTx: (String) -> Unit) {
     var tab by remember { mutableIntStateOf(0) }
     var query by remember { mutableStateOf("") }
     var filter by remember { mutableStateOf<TxType?>(null) }
+    var showFilters by remember { mutableStateOf(false) }
+    val updatedAt = remember { System.currentTimeMillis() }
     val shown = remember(txs, query, filter) { Stats.search(txs, query, filter) }
     val groups = remember(shown) { shown.groupBy { formatDay(it.timestamp) } }
     val mask = "**** **** **** " + (cards.firstOrNull { it.primary }?.lastFour ?: "0000")
@@ -74,22 +77,44 @@ fun HistoryScreen(vm: AppViewModel, onTx: (String) -> Unit) {
                 }
             }
         }
-        Column(
-            Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            SoniTextField(
-                value = query,
-                onValueChange = { query = it.take(40) },
-                label = stringResource(R.string.search)
+            Spacer(Modifier.width(48.dp))
+            Text(
+                stringResource(R.string.updated_at) + ": " + formatStamp(updatedAt),
+                color = SoniColors.Muted,
+                fontSize = 13.sp,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.weight(1f)
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                SoniChip(stringResource(R.string.filter_all), filter == null, { filter = null })
-                SoniChip(stringResource(R.string.incoming), filter == TxType.INCOMING, { filter = TxType.INCOMING })
-                SoniChip(stringResource(R.string.outgoing), filter == TxType.OUTGOING, { filter = TxType.OUTGOING })
+            IconButton(onClick = {
+                showFilters = !showFilters
+                if (!showFilters) { query = ""; filter = null }
+            }) {
+                Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search), tint = SoniColors.Teal)
             }
-            DemoBanner(stringResource(R.string.history_demo_notice))
         }
+        if (showFilters) {
+            Column(
+                Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SoniTextField(
+                    value = query,
+                    onValueChange = { query = it.take(40) },
+                    label = stringResource(R.string.search)
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SoniChip(stringResource(R.string.filter_all), filter == null, { filter = null })
+                    SoniChip(stringResource(R.string.incoming), filter == TxType.INCOMING, { filter = TxType.INCOMING })
+                    SoniChip(stringResource(R.string.outgoing), filter == TxType.OUTGOING, { filter = TxType.OUTGOING })
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+        }
+        Box(Modifier.padding(horizontal = 16.dp)) { DemoBanner(stringResource(R.string.history_demo_notice)) }
         if (shown.isEmpty()) {
             if (txs.isEmpty()) {
                 EmptyState(Icons.Filled.History, stringResource(R.string.empty_tx_title), stringResource(R.string.empty_tx_text))
@@ -128,7 +153,7 @@ private fun OperationRow(tx: Transaction, statement: Boolean, mask: String, onCl
     val incoming = tx.type == TxType.INCOMING
     val amount = (if (incoming) "+" else "-") + String.format(java.util.Locale.US, "%.2f", tx.amount)
     Column(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 12.dp)) {
-        Text(if (statement) tx.counterparty else mask, color = SoniColors.Muted, fontSize = 13.sp, maxLines = 1)
+        Text(if (statement) tx.counterparty else mask.takeLast(9), color = SoniColors.Muted, fontSize = 13.sp, maxLines = 1)
         Spacer(Modifier.height(4.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(

@@ -98,8 +98,11 @@ fun SoniApp(vm: AppViewModel = viewModel()) {
     SideEffect {
         val window = view.context.findFragmentActivity()?.window
         if (window != null) {
-            window.statusBarColor = (if (lightBar) SoniColors.Background else SoniColors.Teal).toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = lightBar
+            val dark = route == Routes.QR
+            window.statusBarColor = (
+                if (dark) Color.Black else if (lightBar) SoniColors.Background else SoniColors.Teal
+            ).toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = lightBar && !dark
         }
     }
 
@@ -222,7 +225,8 @@ fun SoniApp(vm: AppViewModel = viewModel()) {
             composable(Routes.TRANSFERS) {
                 TransfersScreen(
                     onPhone = { nav.navigate(Routes.transferForm("phone")) },
-                    onCard = { nav.navigate(Routes.transferForm("card")) }
+                    onCard = { nav.navigate(Routes.transferForm("card")) },
+                    onInterbank = { nav.navigate(Routes.transferForm("interbank")) }
                 )
             }
             composable(

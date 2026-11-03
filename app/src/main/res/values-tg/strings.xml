@@ -292,4 +292,23 @@
     <string name="miniapps_title">Хизматҳо</string>
     <string name="refresh">Навсозӣ</string>
     <string name="menu">Меню</string>
+    <string name="share_text">SONI CARD-ро санҷед: барномаи намоишии бонки рақамӣ.</string>
+    <string name="drawer_share">Мубодилаи барнома</string>
+    <string name="version_build">Версия: %1$s  Сохт: %2$d</string>
+    <string name="tr_inter_title">Ба кортҳои бонкҳои дигар (Корти Милли)</string>
+    <string name="tr_inter_desc">Рақами корти Корти Миллӣ ва маблағро ворид кунед. Комиссия: 1% (ДЕМО).</string>
+    <string name="recent_title">Қабулкунандагони охирин</string>
+    <string name="recent_empty">Ҳоло қабулкунандаи охирин нест.</string>
+    <string name="pick_contact">Аз рӯйхати тамосҳо интихоб кунед</string>
+    <string name="no_contacts_app">Барномаи «Тамосҳо» ёфт нашуд</string>
+    <string name="add_favorite">Илова ба баргузидаҳо</string>
+    <string name="remove_favorite">Хориҷ аз баргузидаҳо</string>
+    <string name="grp_all">Ҳама</string>
+    <string name="grp_payments">Пардохтҳо</string>
+    <string name="grp_utilities">Хизматрасониҳои коммуналӣ</string>
+    <string name="grp_transport">Нақлиёт</string>
+    <string name="qr_aim">Камераро ба QR-код равона кунед</string>
+    <string name="updated_at">Навсозӣ шуд</string>
+    <string name="close">Пӯшидан</string>
+    <string name="fav_section">Баргузидаҳо</string>
 </resources>
