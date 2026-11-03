@@ -64,6 +64,11 @@ app/src/main/java/tj/soni/card/
 app/src/test/               — unit tests (validators, stats, PIN hashing, demo repository)
 ```
 
+## Дизайн / Design
+Blue (#0A74F5) + orange action buttons, light background, soft shadows, round cards, side menu (drawer),
+floating bottom bar with a central QR button, bottom-sheet payment confirmation, Operations / Statement tabs.
+The logo, name and all texts are original SONI CARD. No third-party logos or brand assets are used.
+
 ## Security notes
 - PIN is never stored: only a PBKDF2 hash with salt, additionally encrypted with an Android Keystore key.
 - No real card numbers, CVV, bank passwords or SMS credentials are collected or generated. Cards show masked numbers only.

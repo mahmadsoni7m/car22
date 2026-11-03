@@ -13,16 +13,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object SoniColors {
-    val Teal = Color(0xFF087C70)
-    val Navy = Color(0xFF102D3A)
-    val Mint = Color(0xFF36B99A)
-    val Background = Color(0xFFF1F6F8)
+    val Teal = Color(0xFF0A74F5)
+    val Navy = Color(0xFF141B34)
+    val Mint = Color(0xFF5AA9FF)
+    val Orange = Color(0xFFFF7525)
+    val Background = Color(0xFFF2F6FF)
     val Surface = Color(0xFFFFFFFF)
-    val Border = Color(0xFFDCE8EA)
-    val Success = Color(0xFF21865C)
-    val Error = Color(0xFFC74747)
-    val Muted = Color(0xFF5E7681)
-    val MintSoft = Color(0xFFE3F4F0)
+    val Border = Color(0xFFE1E9F7)
+    val Success = Color(0xFF2E9E5B)
+    val Error = Color(0xFFE0463C)
+    val Muted = Color(0xFF6B7690)
+    val MintSoft = Color(0xFFE4EEFF)
+    val Field = Color(0xFFF4F5F8)
     val SilverLight = Color(0xFFFAFBFC)
     val SilverDark = Color(0xFFCFD9DE)
 }

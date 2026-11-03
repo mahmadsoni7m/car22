@@ -44,7 +44,8 @@ fun ProfileScreen(
     onSupport: () -> Unit,
     onFaq: () -> Unit,
     onAbout: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onBack: () -> Unit
 ) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     val name = settings?.name.orEmpty().ifBlank { AppViewModel.DEFAULT_NAME }
@@ -52,7 +53,7 @@ fun ProfileScreen(
     var confirmLogout by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize()) {
-        ScreenHeader(stringResource(R.string.profile), null)
+        ScreenHeader(stringResource(R.string.profile), onBack)
         Column(
             Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)

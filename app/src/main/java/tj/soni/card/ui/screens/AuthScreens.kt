@@ -4,6 +4,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.shadow
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -83,9 +85,8 @@ fun SplashScreen(vm: AppViewModel, onRoute: (String) -> Unit) {
             Spacer(Modifier.height(8.dp))
             Text(
                 stringResource(R.string.splash_tagline),
-                color = SoniColors.Muted,
-                modifier = Modifier.background(Color.Transparent),
-                fontSize = 14.sp * alpha
+                color = SoniColors.Muted.copy(alpha = alpha),
+                fontSize = 14.sp
             )
             Spacer(Modifier.height(32.dp))
             CircularProgressIndicator(
@@ -511,54 +512,82 @@ fun PinScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            SoniLogoMark(logoSize = 56.dp)
-            Spacer(Modifier.height(16.dp))
+            SoniLogoMark(logoSize = 80.dp)
+            Spacer(Modifier.height(8.dp))
+            Text(
+                stringResource(R.string.app_name),
+                color = SoniColors.Navy,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                letterSpacing = 2.sp
+            )
+            Spacer(Modifier.height(32.dp))
             Text(
                 stringResource(titleRes),
-                style = MaterialTheme.typography.titleLarge,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
                 color = SoniColors.Navy,
                 textAlign = TextAlign.Center
             )
-            Spacer(Modifier.height(24.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                repeat(4) { i ->
-                    Box(
-                        Modifier.size(16.dp).background(
-                            if (i < entry.length) SoniColors.Teal else SoniColors.Border,
-                            CircleShape
+            Spacer(Modifier.height(20.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+                    repeat(4) { i ->
+                        Box(
+                            Modifier.size(18.dp).then(
+                                if (i < entry.length) Modifier.background(SoniColors.Teal, CircleShape)
+                                else Modifier.border(2.dp, Color(0xFFA9CCFF), CircleShape)
+                            )
                         )
+                    }
+                }
+                Spacer(Modifier.width(24.dp))
+                IconButton(onClick = { if (!busy && entry.isNotEmpty()) entry = entry.dropLast(1) }) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.Backspace,
+                        contentDescription = stringResource(R.string.delete),
+                        tint = SoniColors.Muted
                     )
                 }
             }
-            Spacer(Modifier.height(12.dp))
-            Box(Modifier.height(24.dp)) {
+            Box(Modifier.height(28.dp), contentAlignment = Alignment.Center) {
                 ErrorText(errorRes?.let { stringResource(it) })
             }
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
             val rows = listOf(listOf("1", "2", "3"), listOf("4", "5", "6"), listOf("7", "8", "9"))
             rows.forEach { row ->
                 Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                    row.forEach { d -> PinKey(onClick = { press(d) }) { Text(d, fontSize = 26.sp, color = SoniColors.Navy) } }
+                    row.forEach { d ->
+                        PinKey(onClick = { press(d) }) {
+                            Text(d, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = SoniColors.Navy)
+                        }
+                    }
                 }
                 Spacer(Modifier.height(16.dp))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                if (bioEnabled) {
-                    PinKey(onClick = { promptBiometric() }) {
-                        Icon(Icons.Filled.Fingerprint, contentDescription = stringResource(R.string.bio_title), tint = SoniColors.Teal)
+                if (mode == Routes.PIN_LOGIN) {
+                    PinKey(onClick = { showForgot = true }) {
+                        Text(
+                            stringResource(R.string.pin_forgot),
+                            fontSize = 11.sp,
+                            color = SoniColors.Navy,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(6.dp)
+                        )
                     }
                 } else {
-                    Spacer(Modifier.size(72.dp))
+                    Spacer(Modifier.size(80.dp))
                 }
-                PinKey(onClick = { press("0") }) { Text("0", fontSize = 26.sp, color = SoniColors.Navy) }
-                PinKey(onClick = { if (!busy && entry.isNotEmpty()) entry = entry.dropLast(1) }) {
-                    Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = stringResource(R.string.delete), tint = SoniColors.Navy)
+                PinKey(onClick = { press("0") }) {
+                    Text("0", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = SoniColors.Navy)
                 }
-            }
-            if (mode == Routes.PIN_LOGIN) {
-                Spacer(Modifier.height(8.dp))
-                TextButton(onClick = { showForgot = true }) {
-                    Text(stringResource(R.string.pin_forgot), color = SoniColors.Teal)
+                if (bioEnabled) {
+                    PinKey(onClick = { promptBiometric() }) {
+                        Icon(Icons.Filled.Fingerprint, contentDescription = stringResource(R.string.bio_title), tint = SoniColors.Teal, modifier = Modifier.size(34.dp))
+                    }
+                } else {
+                    Spacer(Modifier.size(80.dp))
                 }
             }
         }
@@ -579,7 +608,10 @@ fun PinScreen(
 @Composable
 private fun PinKey(onClick: () -> Unit, content: @Composable () -> Unit) {
     Box(
-        Modifier.size(72.dp).background(SoniColors.Surface, CircleShape).clickable(onClick = onClick),
+        Modifier.size(80.dp)
+            .shadow(4.dp, CircleShape, ambientColor = Color(0x330A74F5), spotColor = Color(0x330A74F5))
+            .background(SoniColors.Surface, CircleShape)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) { content() }
 }

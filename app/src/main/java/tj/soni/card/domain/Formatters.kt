@@ -25,3 +25,12 @@ fun initialsOf(name: String): String {
     if (parts.isEmpty()) return "S"
     return parts.take(2).joinToString("") { it.first().uppercaseChar().toString() }
 }
+
+fun formatStamp(timestamp: Long): String =
+    SimpleDateFormat("dd.MM.yy - HH:mm:ss", Locale.getDefault()).format(Date(timestamp))
+
+fun formatDay(timestamp: Long): String =
+    SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(timestamp))
+
+fun formatTime(timestamp: Long): String =
+    SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date(timestamp))

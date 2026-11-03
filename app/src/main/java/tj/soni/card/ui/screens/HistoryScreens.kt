@@ -15,6 +15,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.shape.RoundedCornerShape
+import tj.soni.card.data.models.Transaction
+import tj.soni.card.domain.formatDay
+import tj.soni.card.domain.formatTime
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -40,13 +45,39 @@ import tj.soni.card.viewmodel.AppViewModel
 @Composable
 fun HistoryScreen(vm: AppViewModel, onTx: (String) -> Unit) {
     val txs by vm.transactions.collectAsStateWithLifecycle()
+    val cards by vm.cards.collectAsStateWithLifecycle()
+    var tab by remember { mutableIntStateOf(0) }
     var query by remember { mutableStateOf("") }
     var filter by remember { mutableStateOf<TxType?>(null) }
     val shown = remember(txs, query, filter) { Stats.search(txs, query, filter) }
+    val groups = remember(shown) { shown.groupBy { formatDay(it.timestamp) } }
+    val mask = "**** **** **** " + (cards.firstOrNull { it.primary }?.lastFour ?: "0000")
 
     Column(Modifier.fillMaxSize()) {
-        ScreenHeader(stringResource(R.string.history), null)
-        Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(Modifier.fillMaxWidth().background(Color.White)) {
+            listOf(0 to R.string.tab_operations, 1 to R.string.tab_statement).forEach { (i, res) ->
+                Column(
+                    Modifier.weight(1f).clickable { tab = i }.padding(top = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        stringResource(res),
+                        fontSize = 20.sp,
+                        fontWeight = if (tab == i) FontWeight.Bold else FontWeight.Normal,
+                        color = if (tab == i) SoniColors.Teal else SoniColors.Muted
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Box(
+                        Modifier.fillMaxWidth().height(3.dp)
+                            .background(if (tab == i) SoniColors.Teal else Color.Transparent)
+                    )
+                }
+            }
+        }
+        Column(
+            Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             SoniTextField(
                 value = query,
                 onValueChange = { query = it.take(40) },
@@ -66,12 +97,68 @@ fun HistoryScreen(vm: AppViewModel, onTx: (String) -> Unit) {
                 EmptyState(Icons.Filled.Search, stringResource(R.string.empty_search_title), stringResource(R.string.empty_search_text))
             }
         } else {
-            LazyColumn(contentPadding = PaddingValues(16.dp)) {
-                items(shown, key = { it.id }) { tx ->
-                    TxRow(tx) { onTx(tx.id) }
-                    RowDivider()
+            LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)) {
+                groups.forEach { (day, list) ->
+                    item(key = day) {
+                        Box(Modifier.fillMaxWidth().padding(vertical = 8.dp), contentAlignment = Alignment.Center) {
+                            Box(
+                                Modifier.background(SoniColors.MintSoft, RoundedCornerShape(50))
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            ) {
+                                Text(day, color = Color(0xFF3A5A9C), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            }
+                        }
+                    }
+                    item(key = "card-$day") {
+                        SurfaceCard {
+                            list.forEachIndexed { i, tx ->
+                                if (i > 0) RowDivider()
+                                OperationRow(tx, tab == 1, mask) { onTx(tx.id) }
+                            }
+                        }
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun OperationRow(tx: Transaction, statement: Boolean, mask: String, onClick: () -> Unit) {
+    val incoming = tx.type == TxType.INCOMING
+    val amount = (if (incoming) "+" else "-") + String.format(java.util.Locale.US, "%.2f", tx.amount)
+    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 12.dp)) {
+        Text(if (statement) tx.counterparty else mask, color = SoniColors.Muted, fontSize = 13.sp, maxLines = 1)
+        Spacer(Modifier.height(4.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                if (statement) mask else tx.counterparty,
+                color = SoniColors.Navy,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                maxLines = 1,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                amount,
+                color = if (statement) (if (incoming) SoniColors.Success else SoniColors.Navy) else SoniColors.Navy,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+            if (!statement) {
+                Spacer(Modifier.width(8.dp))
+                Icon(Icons.Filled.CheckCircleOutline, contentDescription = null, tint = SoniColors.Success, modifier = Modifier.size(20.dp))
+            }
+        }
+        Spacer(Modifier.height(4.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(tx.category.labelRes()),
+                color = SoniColors.Muted,
+                fontSize = 14.sp,
+                modifier = Modifier.weight(1f)
+            )
+            Text(formatTime(tx.timestamp), color = SoniColors.Muted, fontSize = 14.sp)
         }
     }
 }
@@ -228,14 +315,13 @@ fun NotificationsScreen(vm: AppViewModel, onBack: () -> Unit) {
     val enabled = settings?.notificationsOn ?: true
 
     Column(Modifier.fillMaxSize()) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            ScreenHeader(stringResource(R.string.notifications), onBack, Modifier.weight(1f))
+        ScreenHeader(stringResource(R.string.notifications), onBack, trailing = {
             if (enabled && items.any { !it.read }) {
                 TextButton(onClick = { vm.markAllNotificationsRead() }) {
-                    Text(stringResource(R.string.mark_all_read), color = SoniColors.Teal)
+                    Text(stringResource(R.string.mark_all_read), color = Color.White)
                 }
             }
-        }
+        })
         if (!enabled) {
             EmptyState(Icons.Filled.Notifications, stringResource(R.string.notif_off_title), stringResource(R.string.notif_off_text))
         } else if (items.isEmpty()) {

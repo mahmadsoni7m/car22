@@ -44,6 +44,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -78,7 +79,7 @@ fun SoniLogoMark(logoSize: Dp = 40.dp, modifier: Modifier = Modifier) {
             cornerRadius = CornerRadius(w * 0.07f, w * 0.07f)
         )
         drawRect(
-            SoniColors.Mint,
+            SoniColors.Orange,
             topLeft = Offset(w * 0.2f, h * 0.41f),
             size = Size(w * 0.6f, h * 0.08f)
         )
@@ -92,13 +93,18 @@ fun SoniLogoMark(logoSize: Dp = 40.dp, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SoniWordmark(modifier: Modifier = Modifier, logoSize: Dp = 32.dp, textSize: Int = 16) {
+fun SoniWordmark(
+    modifier: Modifier = Modifier,
+    logoSize: Dp = 32.dp,
+    textSize: Int = 16,
+    textColor: Color = SoniColors.Navy
+) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         SoniLogoMark(logoSize)
         Spacer(Modifier.width(8.dp))
         Text(
             text = stringResource(R.string.app_name),
-            color = SoniColors.Navy,
+            color = textColor,
             fontWeight = FontWeight.Bold,
             fontSize = textSize.sp,
             letterSpacing = 1.sp
@@ -112,17 +118,18 @@ fun PrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    loading: Boolean = false
+    loading: Boolean = false,
+    containerColor: Color = SoniColors.Orange
 ) {
     Button(
         onClick = onClick,
         enabled = enabled && !loading,
-        modifier = modifier.fillMaxWidth().height(52.dp),
-        shape = RoundedCornerShape(16.dp),
+        modifier = modifier.fillMaxWidth().height(56.dp),
+        shape = RoundedCornerShape(28.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = SoniColors.Teal,
+            containerColor = containerColor,
             contentColor = Color.White,
-            disabledContainerColor = SoniColors.Teal.copy(alpha = 0.45f),
+            disabledContainerColor = containerColor.copy(alpha = 0.5f),
             disabledContentColor = Color.White
         )
     ) {
@@ -133,7 +140,7 @@ fun PrimaryButton(
                 strokeWidth = 2.5.dp
             )
         } else {
-            Text(text, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+            Text(text, fontWeight = FontWeight.Bold, fontSize = 17.sp)
         }
     }
 }
@@ -148,19 +155,29 @@ fun SecondaryButton(
     OutlinedButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.fillMaxWidth().height(52.dp),
-        shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, SoniColors.Teal),
+        modifier = modifier.fillMaxWidth().height(56.dp),
+        shape = RoundedCornerShape(28.dp),
+        border = BorderStroke(1.5.dp, SoniColors.Teal),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = SoniColors.Teal)
     ) {
         Text(text, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
     }
 }
 
+/** Sub-screens (with a back button) get the blue header; tab screens get a plain title. */
 @Composable
-fun ScreenHeader(title: String, onBack: (() -> Unit)?, modifier: Modifier = Modifier) {
+fun ScreenHeader(
+    title: String,
+    onBack: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    trailing: @Composable (() -> Unit)? = null
+) {
+    val blue = onBack != null
     Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .then(if (blue) Modifier.background(SoniColors.Teal) else Modifier)
+            .padding(horizontal = 8.dp, vertical = if (blue) 10.dp else 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (onBack != null) {
@@ -168,7 +185,7 @@ fun ScreenHeader(title: String, onBack: (() -> Unit)?, modifier: Modifier = Modi
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.back),
-                    tint = SoniColors.Navy
+                    tint = Color.White
                 )
             }
         } else {
@@ -177,9 +194,10 @@ fun ScreenHeader(title: String, onBack: (() -> Unit)?, modifier: Modifier = Modi
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,
-            color = SoniColors.Navy,
+            color = if (blue) Color.White else SoniColors.Navy,
             modifier = Modifier.weight(1f)
         )
+        if (trailing != null) trailing()
     }
 }
 
@@ -221,11 +239,11 @@ fun SurfaceCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val shape = RoundedCornerShape(20.dp)
+    val shape = RoundedCornerShape(22.dp)
     val base = modifier
         .fillMaxWidth()
+        .shadow(3.dp, shape, ambientColor = Color(0x330A74F5), spotColor = Color(0x330A74F5))
         .background(SoniColors.Surface, shape)
-        .border(1.dp, SoniColors.Border, shape)
     val clickable = if (onClick != null) base.clickable(onClick = onClick) else base
     Column(clickable.padding(16.dp), content = content)
 }
@@ -309,14 +327,14 @@ fun SoniTextField(
             singleLine = singleLine,
             minLines = minLines,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = SoniColors.Teal,
-                unfocusedBorderColor = SoniColors.Border,
+                unfocusedBorderColor = Color.Transparent,
                 focusedLabelColor = SoniColors.Teal,
-                focusedContainerColor = SoniColors.Surface,
-                unfocusedContainerColor = SoniColors.Surface,
-                errorContainerColor = SoniColors.Surface
+                focusedContainerColor = SoniColors.Field,
+                unfocusedContainerColor = SoniColors.Field,
+                errorContainerColor = SoniColors.Field
             ),
             modifier = Modifier.fillMaxWidth()
         )

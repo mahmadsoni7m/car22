@@ -34,41 +34,54 @@ import tj.soni.card.R
 import tj.soni.card.data.models.DemoCard
 import tj.soni.card.ui.theme.SoniColors
 
-/** White-silver virtual card. Shows ONLY a masked number: no real card data exists in the app. */
+/**
+ * Virtual DEMO card: blue for the main card, white for the others.
+ * Shows ONLY a masked number: no real card data exists in the app.
+ */
 @Composable
 fun SoniBankCard(card: DemoCard, holder: String, modifier: Modifier = Modifier) {
     val shape = RoundedCornerShape(24.dp)
+    val dark = card.primary
+    val main = if (dark) Color.White else SoniColors.Navy
+    val muted = if (dark) Color(0xB3FFFFFF) else SoniColors.Muted
+    val brush = if (dark) {
+        Brush.linearGradient(listOf(Color(0xFF2B8CFF), Color(0xFF0A5FD6)))
+    } else {
+        Brush.linearGradient(listOf(Color.White, Color(0xFFEAF1FF)))
+    }
     Box(
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1.586f)
-            .shadow(8.dp, shape, ambientColor = Color(0x33102D3A), spotColor = Color(0x33102D3A))
-            .background(
-                Brush.linearGradient(listOf(SoniColors.SilverLight, Color(0xFFE9EEF1), SoniColors.SilverDark)),
-                shape
-            )
-            .border(1.dp, Color.White, shape)
+            .shadow(8.dp, shape, ambientColor = Color(0x440A74F5), spotColor = Color(0x440A74F5))
+            .background(brush, shape)
+            .border(1.dp, if (dark) Color(0x33FFFFFF) else SoniColors.Border, shape)
     ) {
         Column(
             Modifier.fillMaxSize().padding(20.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                SoniWordmark(modifier = Modifier.weight(1f), logoSize = 28.dp, textSize = 14)
+                SoniWordmark(
+                    modifier = Modifier.weight(1f),
+                    logoSize = 28.dp,
+                    textSize = 14,
+                    textColor = main
+                )
                 DemoBadge()
             }
             Column {
                 Box(
                     Modifier.size(width = 40.dp, height = 28.dp)
                         .background(
-                            Brush.linearGradient(listOf(Color(0xFFE6D8A8), Color(0xFFBFA95F))),
+                            Brush.linearGradient(listOf(Color(0xFFFFB27A), Color(0xFFFF7525))),
                             RoundedCornerShape(6.dp)
                         )
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
                     "****  ****  ****  " + card.lastFour,
-                    color = SoniColors.Navy,
+                    color = main,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
@@ -77,24 +90,24 @@ fun SoniBankCard(card: DemoCard, holder: String, modifier: Modifier = Modifier) 
             }
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
                 Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.card_holder), color = SoniColors.Muted, fontSize = 10.sp)
+                    Text(stringResource(R.string.card_holder), color = muted, fontSize = 10.sp)
                     Text(
                         holder.uppercase(),
-                        color = SoniColors.Navy,
+                        color = main,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 13.sp,
                         maxLines = 1
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
-                    Text(stringResource(R.string.card_expires), color = SoniColors.Muted, fontSize = 10.sp)
-                    Text(card.expiry, color = SoniColors.Navy, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                    Text(stringResource(R.string.card_expires), color = muted, fontSize = 10.sp)
+                    Text(card.expiry, color = main, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                 }
             }
         }
         if (card.frozen) {
             Box(
-                Modifier.fillMaxSize().background(Color(0xAA102D3A), shape),
+                Modifier.fillMaxSize().background(Color(0xAA141B34), shape),
                 contentAlignment = Alignment.Center
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
