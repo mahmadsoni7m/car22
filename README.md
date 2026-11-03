@@ -1,9 +1,9 @@
-# SONI CARD V1.0 (DEMO)
+# BIG CARD V1.0 (DEMO)
 
 Барномаи Android: интерфейси бонки рақамӣ (Kotlin + Jetpack Compose + Material 3).
 **Ин версия танҳо ДЕМО аст**: ҳамаи мавҷудӣ ва амалиётҳо тақлидӣ ва офлайн мебошанд. Пули воқеӣ, бонк ё API-и молиявӣ вуҷуд надорад.
 
-Android app: digital-banking UI demo. Package `tj.soni.card`, min SDK 26, languages: Tajik (default), Russian, English.
+Android app: digital-banking UI demo. Package `tj.big.card`, min SDK 26, languages: Tajik (default), Russian, English.
 **All money, cards and transactions are simulated. No real banking connectivity.**
 
 ---
@@ -11,23 +11,23 @@ Android app: digital-banking UI demo. Package `tj.soni.card`, min SDK 26, langua
 ## Роҳнамо барои навкорон (APK-ро бо GitHub месозем)
 
 ### 1. ZIP-ро боргирӣ кунед
-`SONI-CARD-V1.0.zip`-ро ба телефон ё компютер захира кунед.
+`BIG-CARD-V1.0.zip`-ро ба телефон ё компютер захира кунед.
 
 ### 2. Кушодани ZIP
-Файлро «Extract / Распаковать» кунед. Папкаи `SONI-CARD` пайдо мешавад, ки дар дохилаш `app`, `gradle`, `.github`, `README.md` ҳаст.
+Файлро «Extract / Распаковать» кунед. Папкаи `BIG-CARD` пайдо мешавад, ки дар дохилаш `app`, `gradle`, `.github`, `README.md` ҳаст.
 
 ### 3. Репозитории GitHub созед
 1. Ба github.com ворид шавед → **New repository**.
-2. Ном: `SONI-CARD`. **Public** ё **Private** — ихтиёрӣ. Ҳеҷ файл илова накунед (README/.gitignore не).
+2. Ном: `BIG-CARD`. **Public** ё **Private** — ихтиёрӣ. Ҳеҷ файл илова накунед (README/.gitignore не).
 3. **Create repository**.
 
 ### 4. Лоиҳаро боргузорӣ кунед
 1. Дар саҳифаи репозиторий **uploading an existing file** -ро пахш кунед.
-2. **Мундариҷаи** папкаи `SONI-CARD`-ро кашида ба саҳифа андозед (на худи папкаро, балки файлу папкаҳои дохили онро). Папкаи пинҳонии `.github` ҳатман бояд бошад.
+2. **Мундариҷаи** папкаи `BIG-CARD`-ро кашида ба саҳифа андозед (на худи папкаро, балки файлу папкаҳои дохили онро). Папкаи пинҳонии `.github` ҳатман бояд бошад.
 3. Поёнтар **Commit changes** (шохаи `main`).
 
 > Агар браузер папкаи `.github`-ро нишон надиҳад, Git-ро истифода баред:
-> `git init && git add . && git commit -m "SONI CARD" && git branch -M main && git remote add origin <URL> && git push -u origin main`
+> `git init && git add . && git commit -m "BIG CARD" && git branch -M main && git remote add origin <URL> && git push -u origin main`
 
 ### 5. Actions-ро кушоед
 Дар репозиторий ҷадвали **Actions**-ро пахш кунед. Агар ҳисобшуда пурсад, **I understand my workflows, enable them** -ро интихоб кунед.
@@ -36,8 +36,8 @@ Android app: digital-banking UI demo. Package `tj.soni.card`, min SDK 26, langua
 Workflow **Android CI** худкор баъд аз боргузорӣ оғоз мешавад. Дастӣ: **Android CI → Run workflow → Run workflow**.
 Сохтан тақрибан 5–12 дақиқа мегирад. Тики сабз = муваффақ; xатои сурх = матни хаторо ба мо фиристед.
 
-### 7. SONI-CARD-APK-ро боргирӣ кунед
-Дар саҳифаи иҷрои муваффақ, поёнтар **Artifacts** → **SONI-CARD-APK** -ро пахш кунед. ZIP боргирӣ мешавад; дар дохилаш `app-debug.apk`.
+### 7. BIG-CARD-APK-ро боргирӣ кунед
+Дар саҳифаи иҷрои муваффақ, поёнтар **Artifacts** → **BIG-CARD-APK** -ро пахш кунед. ZIP боргирӣ мешавад; дар дохилаш `app-debug.apk`.
 
 ### 8. Насб дар Android
 1. `app-debug.apk`-ро ба телефон интиқол диҳед ва кушоед.
@@ -46,13 +46,13 @@ Workflow **Android CI** худкор баъд аз боргузорӣ оғоз �
 4. Коди демои SMS: `123456` (дар экран низ нишон дода мешавад).
 
 ### 9. Навсозии барнома баъдтар
-Файлҳоро дар репозиторий иваз кунед (ё `git push`) → Actions боз APK месозад → APK-и навро насб кунед (маълумот нигоҳ дошта мешавад, зеро номи бастаи `tj.soni.card` ва имзои debug як хел мемонад ҳангоми сохтан дар ҳамон муҳити GitHub; агар насб нашуд, барномаи кӯҳнаро нест кунед).
+Файлҳоро дар репозиторий иваз кунед (ё `git push`) → Actions боз APK месозад → APK-и навро насб кунед (маълумот нигоҳ дошта мешавад, зеро номи бастаи `tj.big.card` ва имзои debug як хел мемонад ҳангоми сохтан дар ҳамон муҳити GitHub; агар насб нашуд, барномаи кӯҳнаро нест кунед).
 
 ---
 
 ## Сохтор / Structure
 ```
-app/src/main/java/tj/soni/card/
+app/src/main/java/tj/big/card/
   MainActivity.kt           — AppCompatActivity (BiometricPrompt + per-app language)
   navigation/               — Routes, NavGraph (28 screens), auth guard
   ui/theme|components|screens
@@ -67,7 +67,7 @@ app/src/test/               — unit tests (validators, stats, PIN hashing, demo
 ## Дизайн / Design
 Blue (#0A74F5) + orange action buttons, light background, soft shadows, round cards, side menu (drawer),
 floating bottom bar with a central QR button, bottom-sheet payment confirmation, Operations / Statement tabs.
-The logo, name and all texts are original SONI CARD. No third-party logos or brand assets are used.
+The logo, name and all texts are original BIG CARD. No third-party logos or brand assets are used.
 
 ## Логотипҳо / Logos
 Файлҳои логотипро ба `app/src/main/assets/logos/` андозед (номҳои дақиқ дар `LOGOS.md` ва дар ҳар папка `_PUT_LOGOS_HERE.txt`). Бе тағйири код ба барнома меояд. Агар файл набошад, аломати оддӣ нишон дода мешавад.

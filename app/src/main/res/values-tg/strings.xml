@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SONI CARD</string>
+    <string name="app_name">BIG CARD</string>
     <string name="back">Бозгашт</string>
     <string name="demo_badge">ДЕМО</string>
     <string name="demo_banner">Реҷаи ДЕМО: ҳамаи мавҷудӣ ва амалиётҳо тақлидӣ мебошанд. Пули воқеӣ истифода намешавад.</string>
@@ -14,7 +14,7 @@
     <string name="skip">Гузаштан</string>
     <string name="next">Баъдӣ</string>
     <string name="get_started">Оғоз кардан</string>
-    <string name="welcome_title">Хуш омадед ба SONI CARD</string>
+    <string name="welcome_title">Хуш омадед ба BIG CARD</string>
     <string name="welcome_text">Барои омӯхтани барнома ворид шавед ё профили демо созед.</string>
     <string name="login">Ворид шудан</string>
     <string name="register">Сохтани ҳисоб</string>
@@ -37,7 +37,7 @@
     <string name="register_title">Сабти ном</string>
     <string name="register_text">Профили маҳаллии демо созед. Ҳеҷ чиз ба сервер фиристода намешавад.</string>
     <string name="full_name">Ному насаб</string>
-    <string name="terms_demo">Ман мефаҳмам, ки SONI CARD барномаи ДЕМО аст</string>
+    <string name="terms_demo">Ман мефаҳмам, ки BIG CARD барномаи ДЕМО аст</string>
     <string name="continue_text">Идома додан</string>
     <string name="err_phone">Рақами дурусти 9-рақамаро ворид кунед</string>
     <string name="err_name">Номро ворид кунед (2–50 аломат)</string>
@@ -65,7 +65,7 @@
     <string name="bio_skip">Ҳозир не</string>
     <string name="bio_failed">Санҷиши биометрӣ анҷом наёфт</string>
     <string name="bio_prompt_title">Тасдиқ кунед, ки ин шумоед</string>
-    <string name="bio_prompt_subtitle">SONI CARD DEMO</string>
+    <string name="bio_prompt_subtitle">BIG CARD DEMO</string>
     <string name="bio_toggle_sub">Қулфкушоӣ бо изи ангушт ё чеҳра</string>
     <string name="nav_home">Асосӣ</string>
     <string name="nav_cards">Кортҳо</string>
@@ -108,7 +108,7 @@
     <string name="card_active">Фаъол</string>
     <string name="card_frozen">Яхкарда (ДЕМО)</string>
     <string name="card_limit">Ҳадди рӯзона (ДЕМО)</string>
-    <string name="card_secret_notice">SONI CARD ҳеҷ гоҳ рақамҳои воқеии корт, CVV ва ПИН-ро нишон намедиҳад ва нигоҳ намедорад.</string>
+    <string name="card_secret_notice">BIG CARD ҳеҷ гоҳ рақамҳои воқеии корт, CVV ва ПИН-ро нишон намедиҳад ва нигоҳ намедорад.</string>
     <string name="freeze_card">Яхкунии корт (ДЕМО)</string>
     <string name="unfreeze_card">Яхкушоии корт (ДЕМО)</string>
     <string name="freeze_message">Корти демо ҳамчун яхкарда қайд мешавад.</string>
@@ -194,7 +194,7 @@
     <string name="notif_off_text">Онҳоро дар Танзимот фаъол кунед.</string>
     <string name="empty_notif_title">Огоҳиномае нест</string>
     <string name="empty_notif_text">Паёмҳои нав дар ин ҷо пайдо мешаванд.</string>
-    <string name="notif1_title">Хуш омадед ба SONI CARD</string>
+    <string name="notif1_title">Хуш омадед ба BIG CARD</string>
     <string name="notif1_body">Шумо версияи ДЕМО-ро истифода мебаред. Ҳамаи маълумот тақлидӣ аст.</string>
     <string name="notif2_title">Барномаро ҳифз кунед</string>
     <string name="notif2_body">Биометрияро дар Маркази амният фаъол кунед.</string>
@@ -207,7 +207,7 @@
     <string name="settings">Танзимот</string>
     <string name="support">Дастгирӣ</string>
     <string name="faq">Саволу ҷавоб</string>
-    <string name="about">Дар бораи SONI CARD</string>
+    <string name="about">Дар бораи BIG CARD</string>
     <string name="logout">Баромадан</string>
     <string name="logout_message">Барои воридшавии дубора ПИН лозим мешавад.</string>
     <string name="change_pin">Иваз кардани ПИН</string>
@@ -217,7 +217,7 @@
     <string name="tip2">Бонкҳои воқеӣ ПИН ё CVV-ро тавассути телефон намепурсанд.</string>
     <string name="tip3">Телефонро навсозӣ кунед ва қулф нигоҳ доред.</string>
     <string name="tip4">Барномаҳоро танҳо аз манбаъҳои боэътимод насб кунед.</string>
-    <string name="security_demo_notice">SONI CARD DEMO маълумоти воқеии бонкиро нигоҳ намедорад.</string>
+    <string name="security_demo_notice">BIG CARD DEMO маълумоти воқеии бонкиро нигоҳ намедорад.</string>
     <string name="notif_setting_sub">Нишон додани огоҳиномаҳои демо</string>
     <string name="theme">Намуди зоҳирӣ</string>
     <string name="theme_light">Равшан (пешфарз)</string>
@@ -236,7 +236,7 @@
     <string name="err_subject">Мавзӯъро ворид кунед (ҳадди ақал 3 аломат)</string>
     <string name="err_message">Паём бояд аз 5 то 500 аломат бошад</string>
     <string name="support_saved">Паём сабт шуд (ДЕМО, фиристода нашуд)</string>
-    <string name="faq_q1">Оё SONI CARD бонки воқеӣ аст?</string>
+    <string name="faq_q1">Оё BIG CARD бонки воқеӣ аст?</string>
     <string name="faq_a1">Не. Версияи 1.0 интерфейси ДЕМО аст ва ба ҳеҷ бонк пайваст нест.</string>
     <string name="faq_q2">Оё пул воқеӣ аст?</string>
     <string name="faq_a2">Не. Ҳамаи мавҷудӣ ва амалиётҳо дар дастгоҳи шумо тақлид карда мешаванд.</string>
@@ -249,7 +249,7 @@
     <string name="faq_q6">Оё пардохтҳои воқеӣ илова мешаванд?</string>
     <string name="faq_a6">Танҳо баъд аз пайваст кардани API-ҳои молиявии иҷозатдор ва бэкенди мувофиқ.</string>
     <string name="version_format">Версия %1$s</string>
-    <string name="about_text">SONI CARD намоиши аслии интерфейси бонки рақамӣ бо Kotlin ва Jetpack Compose аст.</string>
+    <string name="about_text">BIG CARD намоиши аслии интерфейси бонки рақамӣ бо Kotlin ва Jetpack Compose аст.</string>
     <string name="about_demo_notice">Танҳо ДЕМО: пайвастшавӣ ба бонки воқеӣ нест.</string>
     <string name="about_package">Баста</string>
     <string name="about_mode">Реҷа</string>
@@ -267,9 +267,9 @@
     <string name="nav_transfers">Интиқол</string>
     <string name="nav_miniapps">Хизматҳо</string>
     <string name="transfers_title">Интиқолҳо</string>
-    <string name="tr_phone_title">SONI (аз рӯи рақами телефон)</string>
+    <string name="tr_phone_title">BIG (аз рӯи рақами телефон)</string>
     <string name="tr_phone_desc">Рақами телефон ва маблағро ворид кунед. Бе комиссия (ДЕМО).</string>
-    <string name="tr_card_title">SONI (аз рӯи рақами корт)</string>
+    <string name="tr_card_title">BIG (аз рӯи рақами корт)</string>
     <string name="tr_card_desc">Рақами корт ва маблағро ворид кунед. Бе комиссия (ДЕМО).</string>
     <string name="phone_hint">Рақами телефони қабулкунанда</string>
     <string name="card_hint">Рақами корти қабулкунанда</string>
@@ -292,7 +292,7 @@
     <string name="miniapps_title">Хизматҳо</string>
     <string name="refresh">Навсозӣ</string>
     <string name="menu">Меню</string>
-    <string name="share_text">SONI CARD-ро санҷед: барномаи намоишии бонки рақамӣ.</string>
+    <string name="share_text">BIG CARD-ро санҷед: барномаи намоишии бонки рақамӣ.</string>
     <string name="drawer_share">Мубодилаи барнома</string>
     <string name="version_build">Версия: %1$s  Сохт: %2$d</string>
     <string name="tr_inter_title">Ба кортҳои бонкҳои дигар (Корти Милли)</string>

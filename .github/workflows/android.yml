@@ -46,7 +46,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: SONI-CARD-APK
+          name: BIG-CARD-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
@@ -54,6 +54,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: SONI-CARD-test-reports
+          name: BIG-CARD-test-reports
           path: app/build/reports/tests/
           if-no-files-found: ignore

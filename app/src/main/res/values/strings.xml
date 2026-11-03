@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SONI CARD</string>
+    <string name="app_name">BIG CARD</string>
     <string name="back">Back</string>
     <string name="demo_badge">DEMO</string>
     <string name="demo_banner">DEMO mode: all balances and transactions are simulated. No real money is used.</string>
@@ -14,7 +14,7 @@
     <string name="skip">Skip</string>
     <string name="next">Next</string>
     <string name="get_started">Get started</string>
-    <string name="welcome_title">Welcome to SONI CARD</string>
+    <string name="welcome_title">Welcome to BIG CARD</string>
     <string name="welcome_text">Log in or create a demo profile to explore the app.</string>
     <string name="login">Log in</string>
     <string name="register">Create account</string>
@@ -37,7 +37,7 @@
     <string name="register_title">Registration</string>
     <string name="register_text">Create a local demo profile. Nothing is sent to any server.</string>
     <string name="full_name">Full name</string>
-    <string name="terms_demo">I understand that SONI CARD is a DEMO app</string>
+    <string name="terms_demo">I understand that BIG CARD is a DEMO app</string>
     <string name="continue_text">Continue</string>
     <string name="err_phone">Enter a valid 9-digit phone number</string>
     <string name="err_name">Enter your name (2–50 characters)</string>
@@ -59,13 +59,13 @@
     <string name="reset">Reset</string>
     <string name="cancel">Cancel</string>
     <string name="bio_title">Biometric login</string>
-    <string name="bio_text">Use your fingerprint or face to unlock SONI CARD faster.</string>
+    <string name="bio_text">Use your fingerprint or face to unlock BIG CARD faster.</string>
     <string name="bio_unavailable">Biometrics are not available on this device. You can continue with your PIN.</string>
     <string name="bio_enable">Enable biometrics</string>
     <string name="bio_skip">Not now</string>
     <string name="bio_failed">Biometric authentication was not completed</string>
     <string name="bio_prompt_title">Confirm it is you</string>
-    <string name="bio_prompt_subtitle">SONI CARD DEMO</string>
+    <string name="bio_prompt_subtitle">BIG CARD DEMO</string>
     <string name="bio_toggle_sub">Unlock the app with fingerprint or face</string>
     <string name="nav_home">Home</string>
     <string name="nav_cards">Cards</string>
@@ -108,7 +108,7 @@
     <string name="card_active">Active</string>
     <string name="card_frozen">Frozen (DEMO)</string>
     <string name="card_limit">Daily limit (DEMO)</string>
-    <string name="card_secret_notice">SONI CARD never shows or stores real card numbers, CVV codes or PINs.</string>
+    <string name="card_secret_notice">BIG CARD never shows or stores real card numbers, CVV codes or PINs.</string>
     <string name="freeze_card">Freeze card (DEMO)</string>
     <string name="unfreeze_card">Unfreeze card (DEMO)</string>
     <string name="freeze_message">The demo card will be marked as frozen.</string>
@@ -194,7 +194,7 @@
     <string name="notif_off_text">Turn them on in Settings.</string>
     <string name="empty_notif_title">No notifications</string>
     <string name="empty_notif_text">New messages will appear here.</string>
-    <string name="notif1_title">Welcome to SONI CARD</string>
+    <string name="notif1_title">Welcome to BIG CARD</string>
     <string name="notif1_body">You are using the DEMO version. All data is simulated.</string>
     <string name="notif2_title">Secure your app</string>
     <string name="notif2_body">Enable biometrics in the Security Center.</string>
@@ -207,7 +207,7 @@
     <string name="settings">Settings</string>
     <string name="support">Support</string>
     <string name="faq">FAQ</string>
-    <string name="about">About SONI CARD</string>
+    <string name="about">About BIG CARD</string>
     <string name="logout">Log out</string>
     <string name="logout_message">You will need your PIN to log in again.</string>
     <string name="change_pin">Change PIN</string>
@@ -217,7 +217,7 @@
     <string name="tip2">Real banks never ask for your PIN or CVV by phone.</string>
     <string name="tip3">Keep your phone updated and locked.</string>
     <string name="tip4">Install apps only from trusted sources.</string>
-    <string name="security_demo_notice">SONI CARD DEMO stores no real bank credentials.</string>
+    <string name="security_demo_notice">BIG CARD DEMO stores no real bank credentials.</string>
     <string name="notif_setting_sub">Show demo notifications</string>
     <string name="theme">Appearance</string>
     <string name="theme_light">Light (default)</string>
@@ -236,7 +236,7 @@
     <string name="err_subject">Enter a subject (min. 3 characters)</string>
     <string name="err_message">Message must be 5–500 characters</string>
     <string name="support_saved">Message recorded (DEMO, not sent)</string>
-    <string name="faq_q1">Is SONI CARD a real bank?</string>
+    <string name="faq_q1">Is BIG CARD a real bank?</string>
     <string name="faq_a1">No. Version 1.0 is a DEMO interface. It has no connection to any bank.</string>
     <string name="faq_q2">Is the money real?</string>
     <string name="faq_a2">No. Every balance and transaction is simulated on your device.</string>
@@ -249,7 +249,7 @@
     <string name="faq_q6">Will real payments be added?</string>
     <string name="faq_a6">Only after integration with authorized financial APIs and a compliant backend.</string>
     <string name="version_format">Version %1$s</string>
-    <string name="about_text">SONI CARD is an original digital banking interface demo built with Kotlin and Jetpack Compose.</string>
+    <string name="about_text">BIG CARD is an original digital banking interface demo built with Kotlin and Jetpack Compose.</string>
     <string name="about_demo_notice">DEMO only: no real banking connectivity.</string>
     <string name="about_package">Package</string>
     <string name="about_mode">Mode</string>
@@ -267,9 +267,9 @@
     <string name="nav_transfers">Transfers</string>
     <string name="nav_miniapps">Services</string>
     <string name="transfers_title">Transfers</string>
-    <string name="tr_phone_title">SONI (by phone number)</string>
+    <string name="tr_phone_title">BIG (by phone number)</string>
     <string name="tr_phone_desc">Enter the phone number and the amount. No fee (DEMO).</string>
-    <string name="tr_card_title">SONI (by card number)</string>
+    <string name="tr_card_title">BIG (by card number)</string>
     <string name="tr_card_desc">Enter the card number and the amount. No fee (DEMO).</string>
     <string name="phone_hint">Recipient phone number</string>
     <string name="card_hint">Recipient card number</string>
@@ -292,7 +292,7 @@
     <string name="miniapps_title">Services</string>
     <string name="refresh">Refresh</string>
     <string name="menu">Menu</string>
-    <string name="share_text">Try SONI CARD: a digital banking demo app.</string>
+    <string name="share_text">Try BIG CARD: a digital banking demo app.</string>
     <string name="drawer_share">Share app</string>
     <string name="version_build">Version: %1$s  Build: %2$d</string>
     <string name="tr_inter_title">Other banks (Korti Milli card)</string>

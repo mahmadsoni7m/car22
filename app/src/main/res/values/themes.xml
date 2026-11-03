@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.SoniCardApp" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@color/soni_bg</item>
-        <item name="android:statusBarColor">@color/soni_bg</item>
-        <item name="android:navigationBarColor">@color/soni_surface</item>
+    <style name="Theme.BigCardApp" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/big_bg</item>
+        <item name="android:statusBarColor">@color/big_bg</item>
+        <item name="android:navigationBarColor">@color/big_surface</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

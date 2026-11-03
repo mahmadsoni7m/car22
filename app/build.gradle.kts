@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "tj.soni.card"
+    namespace = "tj.big.card"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "tj.soni.card"
+        applicationId = "tj.big.card"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

@@ -1,0 +1,379 @@
+package tj.big.card.ui.screens
+
+import android.widget.Toast
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.shape.RoundedCornerShape
+import tj.big.card.data.models.Transaction
+import tj.big.card.domain.formatDay
+import tj.big.card.domain.formatStamp
+import tj.big.card.domain.formatTime
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import tj.big.card.R
+import tj.big.card.data.models.TxType
+import tj.big.card.domain.Stats
+import tj.big.card.domain.formatDate
+import tj.big.card.domain.formatMoney
+import tj.big.card.domain.formatShortDate
+import tj.big.card.domain.formatSigned
+import tj.big.card.ui.components.*
+import tj.big.card.ui.labelRes
+import tj.big.card.ui.theme.BigColors
+import tj.big.card.viewmodel.AppViewModel
+
+// ---------------------------------------------------------------- 18. History
+
+@Composable
+fun HistoryScreen(vm: AppViewModel, onTx: (String) -> Unit) {
+    val txs by vm.transactions.collectAsStateWithLifecycle()
+    val cards by vm.cards.collectAsStateWithLifecycle()
+    var tab by remember { mutableIntStateOf(0) }
+    var query by remember { mutableStateOf("") }
+    var filter by remember { mutableStateOf<TxType?>(null) }
+    var showFilters by remember { mutableStateOf(false) }
+    val updatedAt = remember { System.currentTimeMillis() }
+    val shown = remember(txs, query, filter) { Stats.search(txs, query, filter) }
+    val groups = remember(shown) { shown.groupBy { formatDay(it.timestamp) } }
+    val mask = "**** **** **** " + (cards.firstOrNull { it.primary }?.lastFour ?: "0000")
+
+    Column(Modifier.fillMaxSize()) {
+        Row(Modifier.fillMaxWidth().background(Color.White)) {
+            listOf(0 to R.string.tab_operations, 1 to R.string.tab_statement).forEach { (i, res) ->
+                Column(
+                    Modifier.weight(1f).clickable { tab = i }.padding(top = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        stringResource(res),
+                        fontSize = 20.sp,
+                        fontWeight = if (tab == i) FontWeight.Bold else FontWeight.Normal,
+                        color = if (tab == i) BigColors.Teal else BigColors.Muted
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Box(
+                        Modifier.fillMaxWidth().height(3.dp)
+                            .background(if (tab == i) BigColors.Teal else Color.Transparent)
+                    )
+                }
+            }
+        }
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(Modifier.width(48.dp))
+            Text(
+                stringResource(R.string.updated_at) + ": " + formatStamp(updatedAt),
+                color = BigColors.Muted,
+                fontSize = 13.sp,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = {
+                showFilters = !showFilters
+                if (!showFilters) { query = ""; filter = null }
+            }) {
+                Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search), tint = BigColors.Teal)
+            }
+        }
+        if (showFilters) {
+            Column(
+                Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                BigTextField(
+                    value = query,
+                    onValueChange = { query = it.take(40) },
+                    label = stringResource(R.string.search)
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    BigChip(stringResource(R.string.filter_all), filter == null, { filter = null })
+                    BigChip(stringResource(R.string.incoming), filter == TxType.INCOMING, { filter = TxType.INCOMING })
+                    BigChip(stringResource(R.string.outgoing), filter == TxType.OUTGOING, { filter = TxType.OUTGOING })
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+        }
+        Box(Modifier.padding(horizontal = 16.dp)) { DemoBanner(stringResource(R.string.history_demo_notice)) }
+        if (shown.isEmpty()) {
+            if (txs.isEmpty()) {
+                EmptyState(Icons.Filled.History, stringResource(R.string.empty_tx_title), stringResource(R.string.empty_tx_text))
+            } else {
+                EmptyState(Icons.Filled.Search, stringResource(R.string.empty_search_title), stringResource(R.string.empty_search_text))
+            }
+        } else {
+            LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)) {
+                groups.forEach { (day, list) ->
+                    item(key = day) {
+                        Box(Modifier.fillMaxWidth().padding(vertical = 8.dp), contentAlignment = Alignment.Center) {
+                            Box(
+                                Modifier.background(BigColors.MintSoft, RoundedCornerShape(50))
+                                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                            ) {
+                                Text(day, color = Color(0xFF3A5A9C), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            }
+                        }
+                    }
+                    item(key = "card-$day") {
+                        SurfaceCard {
+                            list.forEachIndexed { i, tx ->
+                                if (i > 0) RowDivider()
+                                OperationRow(tx, tab == 1, mask) { onTx(tx.id) }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun OperationRow(tx: Transaction, statement: Boolean, mask: String, onClick: () -> Unit) {
+    val incoming = tx.type == TxType.INCOMING
+    val amount = (if (incoming) "+" else "-") + String.format(java.util.Locale.US, "%.2f", tx.amount)
+    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 12.dp)) {
+        Text(if (statement) tx.counterparty else mask.takeLast(9), color = BigColors.Muted, fontSize = 13.sp, maxLines = 1)
+        Spacer(Modifier.height(4.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                if (statement) mask else tx.counterparty,
+                color = BigColors.Navy,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                maxLines = 1,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                amount,
+                color = if (statement) (if (incoming) BigColors.Success else BigColors.Navy) else BigColors.Navy,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+            if (!statement) {
+                Spacer(Modifier.width(8.dp))
+                Icon(Icons.Filled.CheckCircleOutline, contentDescription = null, tint = BigColors.Success, modifier = Modifier.size(20.dp))
+            }
+        }
+        Spacer(Modifier.height(4.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(tx.category.labelRes()),
+                color = BigColors.Muted,
+                fontSize = 14.sp,
+                modifier = Modifier.weight(1f)
+            )
+            Text(formatTime(tx.timestamp), color = BigColors.Muted, fontSize = 14.sp)
+        }
+    }
+}
+
+// ---------------------------------------------------------------- 19. Transaction details
+
+@Composable
+fun TransactionDetailsScreen(vm: AppViewModel, txId: String, onBack: () -> Unit) {
+    val txs by vm.transactions.collectAsStateWithLifecycle()
+    val tx = txs.firstOrNull { it.id == txId }
+    val clipboard = LocalClipboardManager.current
+    val context = LocalContext.current
+    val copiedText = stringResource(R.string.copied)
+
+    Column(Modifier.fillMaxSize()) {
+        ScreenHeader(stringResource(R.string.tx_details), onBack)
+        if (tx == null) {
+            EmptyState(Icons.Filled.History, stringResource(R.string.not_found_title), stringResource(R.string.not_found_text))
+        } else {
+            val incoming = tx.type == TxType.INCOMING
+            Column(
+                Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                SurfaceCard {
+                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Box(
+                            Modifier.size(56.dp).background(BigColors.MintSoft, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                if (incoming) Icons.Filled.ArrowDownward else Icons.Filled.ArrowUpward,
+                                contentDescription = null,
+                                tint = if (incoming) BigColors.Success else BigColors.Navy
+                            )
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            formatSigned(tx.amount, incoming),
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (incoming) BigColors.Success else BigColors.Navy
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        DemoBadge()
+                    }
+                }
+                SurfaceCard {
+                    InfoLine(stringResource(R.string.counterparty), tx.counterparty)
+                    RowDivider()
+                    InfoLine(stringResource(R.string.category), stringResource(tx.category.labelRes()))
+                    RowDivider()
+                    InfoLine(
+                        stringResource(R.string.type),
+                        stringResource(if (incoming) R.string.incoming else R.string.outgoing)
+                    )
+                    RowDivider()
+                    InfoLine(stringResource(R.string.date), formatDate(tx.timestamp))
+                    RowDivider()
+                    InfoLine(stringResource(R.string.tx_id), tx.id)
+                    if (tx.comment.isNotBlank()) {
+                        RowDivider()
+                        InfoLine(stringResource(R.string.comment), tx.comment)
+                    }
+                }
+                DemoBanner(stringResource(R.string.tx_demo_notice))
+                SecondaryButton(stringResource(R.string.copy_id), onClick = {
+                    clipboard.setText(AnnotatedString(tx.id))
+                    Toast.makeText(context, copiedText, Toast.LENGTH_SHORT).show()
+                })
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------- 20. Statistics
+
+@Composable
+fun StatisticsScreen(vm: AppViewModel, onBack: () -> Unit) {
+    val txs by vm.transactions.collectAsStateWithLifecycle()
+    var days by remember { mutableIntStateOf(30) }
+    val now = remember { System.currentTimeMillis() }
+    val period = remember(txs, days) { Stats.filterSince(txs, now - days * Stats.DAY_MS) }
+    val summary = remember(period) { Stats.summary(period) }
+    val categories = remember(period) { Stats.byCategory(period) }
+    val weekExpense = remember(txs) { Stats.dailyTotals(txs, 7, now, TxType.OUTGOING) }
+    val weekIncome = remember(txs) { Stats.dailyTotals(txs, 7, now, TxType.INCOMING) }
+    val labels = remember { (6 downTo 0).map { formatShortDate(now - it * Stats.DAY_MS) } }
+
+    Column(Modifier.fillMaxSize()) {
+        ScreenHeader(stringResource(R.string.statistics), onBack)
+        Column(
+            Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            DemoBanner(stringResource(R.string.stats_demo_notice))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                BigChip(stringResource(R.string.period_7), days == 7, { days = 7 })
+                BigChip(stringResource(R.string.period_30), days == 30, { days = 30 })
+                BigChip(stringResource(R.string.period_90), days == 90, { days = 90 })
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                FlowSummaryTile(true, stringResource(R.string.incoming), summary.income, Modifier.weight(1f))
+                FlowSummaryTile(false, stringResource(R.string.outgoing), summary.expense, Modifier.weight(1f))
+            }
+            SurfaceCard {
+                Text(stringResource(R.string.net_result), color = BigColors.Muted, fontSize = 13.sp)
+                val net = summary.income - summary.expense
+                Text(
+                    (if (net >= 0) "+" else "-") + formatMoney(kotlin.math.abs(net)),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (net >= 0) BigColors.Success else BigColors.Error
+                )
+            }
+            SurfaceCard {
+                Text(stringResource(R.string.income_7_days), style = MaterialTheme.typography.titleMedium, color = BigColors.Navy)
+                Spacer(Modifier.height(12.dp))
+                BarChart(weekIncome, labels, barColor = BigColors.Mint)
+            }
+            SurfaceCard {
+                Text(stringResource(R.string.expenses_7_days), style = MaterialTheme.typography.titleMedium, color = BigColors.Navy)
+                Spacer(Modifier.height(12.dp))
+                BarChart(weekExpense, labels)
+            }
+            SurfaceCard {
+                Text(stringResource(R.string.by_category), style = MaterialTheme.typography.titleMedium, color = BigColors.Navy)
+                Spacer(Modifier.height(12.dp))
+                if (categories.isEmpty()) {
+                    Text(stringResource(R.string.empty_stats_text), color = BigColors.Muted)
+                } else {
+                    val total = categories.sumOf { it.second }.coerceAtLeast(1.0)
+                    categories.forEach { (cat, sum) ->
+                        Row(Modifier.fillMaxWidth()) {
+                            Text(stringResource(cat.labelRes()), color = BigColors.Navy, modifier = Modifier.weight(1f))
+                            Text(formatMoney(sum), color = BigColors.Navy, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                        }
+                        Spacer(Modifier.height(4.dp))
+                        FractionBar((sum / total).toFloat())
+                        Spacer(Modifier.height(12.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------- 21. Notifications
+
+@Composable
+fun NotificationsScreen(vm: AppViewModel, onBack: () -> Unit) {
+    val settings by vm.settings.collectAsStateWithLifecycle()
+    val items by vm.notifications.collectAsStateWithLifecycle()
+    val enabled = settings?.notificationsOn ?: true
+
+    Column(Modifier.fillMaxSize()) {
+        ScreenHeader(stringResource(R.string.notifications), onBack, trailing = {
+            if (enabled && items.any { !it.read }) {
+                TextButton(onClick = { vm.markAllNotificationsRead() }) {
+                    Text(stringResource(R.string.mark_all_read), color = Color.White)
+                }
+            }
+        })
+        if (!enabled) {
+            EmptyState(Icons.Filled.Notifications, stringResource(R.string.notif_off_title), stringResource(R.string.notif_off_text))
+        } else if (items.isEmpty()) {
+            EmptyState(Icons.Filled.Notifications, stringResource(R.string.empty_notif_title), stringResource(R.string.empty_notif_text))
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(items, key = { it.id }) { n ->
+                    SurfaceCard(onClick = { vm.markNotificationRead(n.id) }) {
+                        Row(verticalAlignment = Alignment.Top) {
+                            Box(
+                                Modifier.padding(top = 6.dp).size(10.dp).background(
+                                    if (n.read) BigColors.Border else BigColors.Teal, CircleShape
+                                )
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text(stringResource(n.titleRes), color = BigColors.Navy, fontWeight = FontWeight.SemiBold)
+                                Spacer(Modifier.height(4.dp))
+                                Text(stringResource(n.bodyRes), color = BigColors.Muted, fontSize = 14.sp)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

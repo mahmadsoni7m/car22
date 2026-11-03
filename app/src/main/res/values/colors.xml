@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="soni_teal">#0A74F5</color>
-    <color name="soni_navy">#141B34</color>
-    <color name="soni_mint">#5AA9FF</color>
-    <color name="soni_bg">#F2F6FF</color>
-    <color name="soni_surface">#FFFFFF</color>
-    <color name="soni_border">#E1E9F7</color>
-    <color name="soni_success">#2E9E5B</color>
-    <color name="soni_error">#E0463C</color>
+    <color name="big_teal">#0A74F5</color>
+    <color name="big_navy">#141B34</color>
+    <color name="big_mint">#5AA9FF</color>
+    <color name="big_bg">#F2F6FF</color>
+    <color name="big_surface">#FFFFFF</color>
+    <color name="big_border">#E1E9F7</color>
+    <color name="big_success">#2E9E5B</color>
+    <color name="big_error">#E0463C</color>
 </resources>

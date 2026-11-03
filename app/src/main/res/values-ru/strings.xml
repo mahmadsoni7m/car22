@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SONI CARD</string>
+    <string name="app_name">BIG CARD</string>
     <string name="back">Назад</string>
     <string name="demo_badge">ДЕМО</string>
     <string name="demo_banner">Режим ДЕМО: все балансы и операции имитированы. Реальные деньги не используются.</string>
@@ -14,7 +14,7 @@
     <string name="skip">Пропустить</string>
     <string name="next">Далее</string>
     <string name="get_started">Начать</string>
-    <string name="welcome_title">Добро пожаловать в SONI CARD</string>
+    <string name="welcome_title">Добро пожаловать в BIG CARD</string>
     <string name="welcome_text">Войдите или создайте демо-профиль, чтобы изучить приложение.</string>
     <string name="login">Войти</string>
     <string name="register">Создать аккаунт</string>
@@ -37,7 +37,7 @@
     <string name="register_title">Регистрация</string>
     <string name="register_text">Создайте локальный демо-профиль. Ничего не отправляется на сервер.</string>
     <string name="full_name">Полное имя</string>
-    <string name="terms_demo">Я понимаю, что SONI CARD — ДЕМО-приложение</string>
+    <string name="terms_demo">Я понимаю, что BIG CARD — ДЕМО-приложение</string>
     <string name="continue_text">Продолжить</string>
     <string name="err_phone">Введите корректный номер из 9 цифр</string>
     <string name="err_name">Введите имя (2–50 символов)</string>
@@ -65,7 +65,7 @@
     <string name="bio_skip">Не сейчас</string>
     <string name="bio_failed">Биометрическая проверка не завершена</string>
     <string name="bio_prompt_title">Подтвердите, что это вы</string>
-    <string name="bio_prompt_subtitle">SONI CARD DEMO</string>
+    <string name="bio_prompt_subtitle">BIG CARD DEMO</string>
     <string name="bio_toggle_sub">Разблокировка отпечатком или лицом</string>
     <string name="nav_home">Главная</string>
     <string name="nav_cards">Карты</string>
@@ -108,7 +108,7 @@
     <string name="card_active">Активна</string>
     <string name="card_frozen">Заморожена (ДЕМО)</string>
     <string name="card_limit">Дневной лимит (ДЕМО)</string>
-    <string name="card_secret_notice">SONI CARD никогда не показывает и не хранит реальные номера карт, CVV и PIN-коды.</string>
+    <string name="card_secret_notice">BIG CARD никогда не показывает и не хранит реальные номера карт, CVV и PIN-коды.</string>
     <string name="freeze_card">Заморозить карту (ДЕМО)</string>
     <string name="unfreeze_card">Разморозить карту (ДЕМО)</string>
     <string name="freeze_message">Демо-карта будет отмечена как замороженная.</string>
@@ -194,7 +194,7 @@
     <string name="notif_off_text">Включите их в настройках.</string>
     <string name="empty_notif_title">Нет уведомлений</string>
     <string name="empty_notif_text">Новые сообщения появятся здесь.</string>
-    <string name="notif1_title">Добро пожаловать в SONI CARD</string>
+    <string name="notif1_title">Добро пожаловать в BIG CARD</string>
     <string name="notif1_body">Вы используете ДЕМО-версию. Все данные имитированы.</string>
     <string name="notif2_title">Защитите приложение</string>
     <string name="notif2_body">Включите биометрию в Центре безопасности.</string>
@@ -207,7 +207,7 @@
     <string name="settings">Настройки</string>
     <string name="support">Поддержка</string>
     <string name="faq">Вопросы и ответы</string>
-    <string name="about">О SONI CARD</string>
+    <string name="about">О BIG CARD</string>
     <string name="logout">Выйти</string>
     <string name="logout_message">Для повторного входа потребуется PIN-код.</string>
     <string name="change_pin">Сменить PIN-код</string>
@@ -217,7 +217,7 @@
     <string name="tip2">Настоящие банки не просят PIN или CVV по телефону.</string>
     <string name="tip3">Обновляйте телефон и блокируйте экран.</string>
     <string name="tip4">Устанавливайте приложения только из надёжных источников.</string>
-    <string name="security_demo_notice">SONI CARD DEMO не хранит реальные банковские данные.</string>
+    <string name="security_demo_notice">BIG CARD DEMO не хранит реальные банковские данные.</string>
     <string name="notif_setting_sub">Показывать демо-уведомления</string>
     <string name="theme">Оформление</string>
     <string name="theme_light">Светлая (по умолчанию)</string>
@@ -236,7 +236,7 @@
     <string name="err_subject">Введите тему (мин. 3 символа)</string>
     <string name="err_message">Сообщение должно быть от 5 до 500 символов</string>
     <string name="support_saved">Сообщение записано (ДЕМО, не отправлено)</string>
-    <string name="faq_q1">SONI CARD — это настоящий банк?</string>
+    <string name="faq_q1">BIG CARD — это настоящий банк?</string>
     <string name="faq_a1">Нет. Версия 1.0 — ДЕМО-интерфейс. Он не связан ни с каким банком.</string>
     <string name="faq_q2">Деньги настоящие?</string>
     <string name="faq_a2">Нет. Все балансы и операции имитируются на вашем устройстве.</string>
@@ -249,7 +249,7 @@
     <string name="faq_q6">Появятся ли реальные платежи?</string>
     <string name="faq_a6">Только после интеграции с авторизованными финансовыми API и соответствующим бэкендом.</string>
     <string name="version_format">Версия %1$s</string>
-    <string name="about_text">SONI CARD — оригинальная демонстрация интерфейса цифрового банка на Kotlin и Jetpack Compose.</string>
+    <string name="about_text">BIG CARD — оригинальная демонстрация интерфейса цифрового банка на Kotlin и Jetpack Compose.</string>
     <string name="about_demo_notice">Только ДЕМО: нет подключения к реальному банку.</string>
     <string name="about_package">Пакет</string>
     <string name="about_mode">Режим</string>
@@ -267,9 +267,9 @@
     <string name="nav_transfers">Переводы</string>
     <string name="nav_miniapps">Сервисы</string>
     <string name="transfers_title">Переводы</string>
-    <string name="tr_phone_title">SONI (по номеру телефона)</string>
+    <string name="tr_phone_title">BIG (по номеру телефона)</string>
     <string name="tr_phone_desc">Укажите номер телефона и сумму перевода. Без комиссии (ДЕМО).</string>
-    <string name="tr_card_title">SONI (по номеру карты)</string>
+    <string name="tr_card_title">BIG (по номеру карты)</string>
     <string name="tr_card_desc">Укажите номер карты и сумму перевода. Без комиссии (ДЕМО).</string>
     <string name="phone_hint">Номер телефона получателя</string>
     <string name="card_hint">Номер карты получателя</string>
@@ -292,7 +292,7 @@
     <string name="miniapps_title">Сервисы</string>
     <string name="refresh">Обновить</string>
     <string name="menu">Меню</string>
-    <string name="share_text">Попробуйте SONI CARD: демо-приложение цифрового банка.</string>
+    <string name="share_text">Попробуйте BIG CARD: демо-приложение цифрового банка.</string>
     <string name="drawer_share">Поделиться приложением</string>
     <string name="version_build">Версия: %1$s  Сборка: %2$d</string>
     <string name="tr_inter_title">На карты других банков (Корти Милли)</string>

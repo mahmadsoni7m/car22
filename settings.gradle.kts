@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "SONI-CARD"
+rootProject.name = "BIG-CARD"
 include(":app")
